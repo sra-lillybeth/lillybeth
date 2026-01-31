@@ -15,7 +15,12 @@
       "Bash(source .env.local)",
       "Bash(set +a)",
       "Bash(npx tsx:*)",
-      "Bash(source:*)"
+      "Bash(source:*)",
+      "Bash(tree:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(ls:*)"
     ]
   }
 }
