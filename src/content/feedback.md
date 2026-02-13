@@ -1,31 +1,36 @@
-# Feedback – Dashboard statistics extension
+## Feedback – Group Booking Editing Improvements & Calendar UX
 
-## 1. Dashboard summary statistics
+### 1. Edit Group Booking – Room-level Additional Prices
 
-Extend the Dashboard view with additional summary information next to the existing action buttons
-(Create Booking, Create Special Day).
+Currently:
+- In **Edit Group Booking**, room-level additional prices cannot be edited.
+- This is only possible during Create Group Booking.
 
-The Dashboard should display the following real-time statistics:
+### Required Changes
 
-### Booking statistics
-- Total number of bookings
-- Number of open / not completed bookings
-- Number of unpaid bookings
-  - Payment status is NOT Fully Paid
+- In **Edit Group Booking**:
+  - For each room in the group, it must be possible to:
+    - Modify selected additional prices
+    - Use the same UI and behavior as in Create Group Booking
+- The logic must:
+  - Respect mandatory additional prices
+  - Not allow editing price amounts (only selection), since amounts are rule-based
+  - Recalculate room price and group total correctly after changes
 
-### Guest statistics
-- Number of guests currently staying today
-  - Bookings where:
-    - Today is between start date and end date (inclusive)
-    - Booking status is Checked in
+---
 
-### UI / UX requirements
-- Statistics should be clearly visible next to the two action buttons
-- Use clean, minimal cards or inline badges
-- Each statistic should have:
-  - A label
-  - A numeric value
-- Visual hierarchy should not overpower the Calendar view
-- Dashboard remains **read-only**
-  - No editing
-  - No drag & drop
+### 2. Calendar – Group Booking Edit Behavior
+
+Currently:
+- Clicking edit on a Group Booking in Calendar opens the **single booking edit modal**
+
+### Required Changes
+
+- In Calendar view:
+  - Clicking edit on a Group Booking should open:
+    - The **Edit Room Booking** modal (room-level editor) for the clicked room booking
+  - Additionally:
+    - There must be a clear button (e.g. "Edit Group Booking") to open the full Group Booking editor
+- UX Goals:
+  - Fast room-level corrections directly from Calendar
+  - Still allow full group-level editing from the same context

@@ -90,6 +90,7 @@ model BuildingAdditionalPrice {
   priceEur   Float
   mandatory  Boolean  @default(false)
   perNight   Boolean  @default(false)
+  perGuest   Boolean  @default(false)
   order      Int      @default(0)
   buildingId String
   building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
@@ -155,6 +156,7 @@ model RoomTypeAdditionalPrice {
   priceEur   Float
   mandatory  Boolean  @default(false)
   perNight   Boolean  @default(false)
+  perGuest   Boolean  @default(false)
   order      Int      @default(0)
   roomTypeId String
   roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
@@ -206,6 +208,43 @@ model CalendarOverride {
   @@map("calendar_overrides")
 }
 
+// BookingGroup: Container for multi-room bookings
+// Holds shared guest information and aggregated totals
+model BookingGroup {
+  id                     String        @id @default(cuid())
+  // Guest information (single source of truth for grouped bookings)
+  guestName              String
+  guestEmail             String?
+  guestPhone             String?
+  // Shared booking metadata
+  source                 BookingSource @default(MANUAL)
+  checkIn                DateTime      @db.Date
+  checkOut               DateTime      @db.Date
+  arrivalTime            String?
+  notes                  String?
+  // Aggregated status
+  status                 BookingStatus @default(INCOMING)
+  paymentStatus          PaymentStatus @default(PENDING)
+  // Aggregated pricing
+  calculatedTotalAmount  Float?        // Always auto-computed sum of room totals (for reference)
+  totalAmount            Float?        // Final agreed price (may differ from calculated if custom)
+  hasCustomFinalAmount   Boolean       @default(false) // True if totalAmount is a custom agreement
+  hasCustomHufPrice      Boolean       @default(false)
+  customHufPrice         Float?
+  // Status tracking (applies to whole group)
+  invoiceSent       Boolean       @default(false)
+  vendegem          Boolean       @default(false)
+  cleaned           Boolean       @default(false)
+  // Timestamps
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  // Relations
+  bookings          Booking[]     // The individual room bookings
+  payments          Payment[]     // Group-level payments
+
+  @@map("booking_groups")
+}
+
 model Booking {
   id               String                   @id @default(cuid())
   source           BookingSource            @default(MANUAL)
@@ -220,7 +259,12 @@ model Booking {
   paymentStatus    PaymentStatus            @default(PENDING)
   notes            String?
   totalAmount      Float?
+  // Custom HUF price for special agreements (does not override EUR price)
+  hasCustomHufPrice Boolean                 @default(false)
+  customHufPrice    Float?
   roomId           String
+  // Optional: Group membership (null = standalone booking)
+  groupId          String?
   // Status tracking checkboxes
   invoiceSent      Boolean                  @default(false)
   vendegem         Boolean                  @default(false)
@@ -230,6 +274,7 @@ model Booking {
   additionalPrices BookingAdditionalPrice[]
   payments         Payment[]
   room             Room                     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  group            BookingGroup?            @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("bookings")
 }
@@ -241,9 +286,12 @@ model Payment {
   method    PaymentMethod
   date      DateTime        @db.Date
   note      String?
-  bookingId String
+  // Payment can be linked to a standalone booking OR a booking group
+  bookingId String?
+  groupId   String?
   createdAt DateTime        @default(now())
-  booking   Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  booking   Booking?        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  group     BookingGroup?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }

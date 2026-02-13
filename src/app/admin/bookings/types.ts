@@ -67,6 +67,8 @@ export interface Booking {
   paymentStatus: PaymentStatus
   notes: string | null
   totalAmount: number | null
+  hasCustomHufPrice: boolean
+  customHufPrice: number | null
   roomId: string
   room: Room
   additionalPrices: BookingAdditionalPrice[]
@@ -76,6 +78,48 @@ export interface Booking {
   invoiceSent: boolean
   vendegem: boolean
   cleaned: boolean
+  // Group relation (for grouped bookings)
+  groupId?: string | null
+}
+
+// Room booking within a group
+export interface GroupRoomBooking {
+  id: string
+  roomId: string
+  guestCount: number
+  totalAmount: number | null
+  room: Room
+  additionalPrices: BookingAdditionalPrice[]
+}
+
+// Unified list item - can be either standalone booking or a group
+export interface ListItem {
+  type: 'standalone' | 'group'
+  id: string
+  guestName: string
+  guestEmail: string | null
+  guestPhone: string | null
+  guestCount: number
+  checkIn: string
+  checkOut: string
+  arrivalTime: string | null
+  source: BookingSource
+  status: BookingStatus
+  paymentStatus: PaymentStatus
+  notes: string | null
+  totalAmount: number | null
+  hasCustomHufPrice: boolean
+  customHufPrice: number | null
+  invoiceSent: boolean
+  vendegem: boolean
+  cleaned: boolean
+  nights: number
+  roomCount: number
+  // For standalone bookings
+  room?: Room
+  additionalPrices?: BookingAdditionalPrice[]
+  // For groups - nested room bookings
+  bookings?: GroupRoomBooking[]
 }
 
 export interface AvailableRoom {
@@ -94,6 +138,7 @@ export interface PriceBreakdown {
     priceEur: number
     mandatory: boolean
     perNight: boolean
+    perGuest: boolean
     origin: 'building' | 'roomType'
   }[]
   additionalPrices: {
@@ -126,11 +171,11 @@ export interface BookingFormData {
 
 // Constants
 export const SOURCE_COLORS = {
-  MANUAL: { bg: 'bg-stone-100', border: 'border-stone-400', text: 'text-stone-800', badge: 'bg-stone-400' },
-  WEBSITE: { bg: 'bg-yellow-100', border: 'border-yellow-400', text: 'text-yellow-800', badge: 'bg-yellow-400' },
-  BOOKING_COM: { bg: 'bg-blue-100', border: 'border-blue-400', text: 'text-blue-800', badge: 'bg-blue-400' },
-  SZALLAS_HU: { bg: 'bg-orange-100', border: 'border-orange-400', text: 'text-orange-800', badge: 'bg-orange-400' },
-  AIRBNB: { bg: 'bg-red-100', border: 'border-red-400', text: 'text-red-800', badge: 'bg-red-400' },
+  MANUAL: { bg: 'bg-emerald-100', border: 'border-emerald-500', text: 'text-emerald-800', badge: 'bg-emerald-500' },
+  WEBSITE: { bg: 'bg-yellow-100', border: 'border-yellow-500', text: 'text-yellow-800', badge: 'bg-yellow-500' },
+  BOOKING_COM: { bg: 'bg-blue-100', border: 'border-blue-500', text: 'text-blue-800', badge: 'bg-blue-500' },
+  SZALLAS_HU: { bg: 'bg-purple-100', border: 'border-purple-500', text: 'text-purple-800', badge: 'bg-purple-500' },
+  AIRBNB: { bg: 'bg-red-100', border: 'border-red-500', text: 'text-red-800', badge: 'bg-red-500' },
 }
 
 export const SOURCE_LABELS = {
