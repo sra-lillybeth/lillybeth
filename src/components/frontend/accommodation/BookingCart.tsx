@@ -1,0 +1,126 @@
+'use client';
+
+import { useState } from 'react';
+import { useBookingCart } from '@/contexts/BookingCartContext';
+import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
+
+export function BookingCart() {
+  const { items, totalRooms, removeItem, clearCart } = useBookingCart();
+  const { t } = useFrontendLanguage();
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  // Don't render if cart is empty
+  if (totalRooms === 0) {
+    return null;
+  }
+
+  // Calculate total price per night
+  const totalPricePerNight = items.reduce((sum, item) => {
+    if (item.pricePerNight) {
+      return sum + item.pricePerNight * item.quantity;
+    }
+    return sum;
+  }, 0);
+
+  // Calculate total capacity
+  const totalCapacity = items.reduce((sum, item) => sum + item.capacity * item.quantity, 0);
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
+      <div className="max-w-4xl mx-auto px-4 pb-4 pointer-events-auto">
+        <div className="bg-stone-800 text-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Expanded view with item details */}
+          {isExpanded && (
+            <div className="max-h-[60vh] overflow-y-auto border-b border-stone-700">
+              <div className="p-4 space-y-3">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-semibold">{t.accommodation.roomTypes}</h3>
+                  <button
+                    onClick={clearCart}
+                    className="text-sm text-stone-400 hover:text-white transition-colors"
+                  >
+                    {t.common.close}
+                  </button>
+                </div>
+
+                {items.map((item) => (
+                  <div
+                    key={item.roomTypeId}
+                    className="flex items-center justify-between py-3 border-b border-stone-700 last:border-0"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{item.roomTypeName}</p>
+                      <p className="text-sm text-stone-400">
+                        {item.accommodationName} • {item.capacity} {item.capacity === 1 ? 'guest' : 'guests'}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 ml-4">
+                      <div className="text-right">
+                        <p className="font-semibold">x{item.quantity}</p>
+                        {item.pricePerNight && (
+                          <p className="text-sm text-stone-400">
+                            €{item.pricePerNight * item.quantity}/night
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => removeItem(item.roomTypeId)}
+                        className="p-2 text-stone-400 hover:text-white transition-colors"
+                        aria-label="Remove item"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Main bar */}
+          <div className="p-4 flex items-center justify-between gap-4">
+            {/* Left: Summary info */}
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex items-center gap-3 text-left flex-1 min-w-0"
+            >
+              {/* Room count badge */}
+              <div className="flex items-center justify-center w-10 h-10 bg-white text-stone-800 rounded-full font-bold text-lg flex-shrink-0">
+                {totalRooms}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <p className="font-medium">
+                  {totalRooms} {totalRooms === 1 ? 'room' : 'rooms'} selected
+                </p>
+                <p className="text-sm text-stone-400 truncate">
+                  {totalCapacity} {totalCapacity === 1 ? 'guest' : 'guests'} total
+                  {totalPricePerNight > 0 && ` • €${totalPricePerNight}/night`}
+                </p>
+              </div>
+
+              {/* Expand/collapse indicator */}
+              <svg
+                className={`w-5 h-5 text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+
+            {/* Right: CTA Button */}
+            <button
+              className="px-6 py-3 bg-white text-stone-800 font-semibold rounded-xl hover:bg-stone-100 transition-colors flex-shrink-0"
+            >
+              {t.header.bookNow}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

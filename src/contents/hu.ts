@@ -124,7 +124,7 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     checkAvailability: 'Elérhetőség ellenőrzése',
     showMore: 'Több mutatása',
     showLess: 'Kevesebb mutatása',
-    fromPrice: 'Től',
+    fromPrice: 'Induló ár',
     perNight: '/ éjszaka',
     viewDetails: 'Részletek',
     bookThisRoom: 'Szoba foglalása',

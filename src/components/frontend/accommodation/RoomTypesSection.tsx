@@ -35,12 +35,16 @@ interface RoomType {
 interface RoomTypesSectionProps {
   roomTypes: RoomType[];
   accommodationId: string;
+  accommodationName: string;
+  accommodationAmenities: Amenity[];
   getLocalizedText: (field: Record<string, string> | string | null | undefined) => string;
 }
 
 export function RoomTypesSection({
   roomTypes,
   accommodationId,
+  accommodationName,
+  accommodationAmenities,
   getLocalizedText,
 }: RoomTypesSectionProps) {
   const { t } = useFrontendLanguage();
@@ -79,6 +83,8 @@ export function RoomTypesSection({
               key={roomType.id}
               roomType={roomType}
               accommodationId={accommodationId}
+              accommodationName={accommodationName}
+              accommodationAmenities={accommodationAmenities}
               getLocalizedText={getLocalizedText}
               index={index}
               isVisible={isVisible}

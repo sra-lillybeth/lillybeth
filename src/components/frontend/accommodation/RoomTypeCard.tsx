@@ -2,8 +2,8 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
+import { useBookingCart } from '@/contexts/BookingCartContext';
 
 interface AccommodationImage {
   id: string;
@@ -31,36 +31,57 @@ interface RoomType {
   minPrice: number | null;
   images: AccommodationImage[];
   amenityCategories: AmenityCategory[];
+  availableRooms?: number;
 }
 
 interface RoomTypeCardProps {
   roomType: RoomType;
   accommodationId: string;
+  accommodationName: string;
+  accommodationAmenities: Amenity[];
   getLocalizedText: (field: Record<string, string> | string | null | undefined) => string;
   index: number;
   isVisible: boolean;
 }
 
+const INITIAL_AMENITIES_COUNT = 10;
+
 export function RoomTypeCard({
   roomType,
   accommodationId,
+  accommodationName,
+  accommodationAmenities,
   getLocalizedText,
   index,
   isVisible,
 }: RoomTypeCardProps) {
   const { t } = useFrontendLanguage();
+  const { addOrUpdateItem, getItemQuantity } = useBookingCart();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const name = getLocalizedText(roomType.name);
   const description = getLocalizedText(roomType.description);
+  const quantity = getItemQuantity(roomType.id);
+  const availableRooms = roomType.availableRooms ?? 10;
 
-  // Get first few amenities to display
-  const allAmenities = roomType.amenityCategories.flatMap((cat) => cat.amenities);
-  const displayAmenities = allAmenities.slice(0, 6);
+  // Merge room type amenities with accommodation amenities
+  const roomTypeAmenities = roomType.amenityCategories.flatMap((cat) => cat.amenities);
+  const allAmenities = [...roomTypeAmenities, ...accommodationAmenities];
+
+  // Remove duplicates by id
+  const uniqueAmenities = allAmenities.filter(
+    (amenity, index, self) => self.findIndex((a) => a.id === amenity.id) === index
+  );
+
+  const displayAmenities = showAllAmenities
+    ? uniqueAmenities
+    : uniqueAmenities.slice(0, INITIAL_AMENITIES_COUNT);
+  const hasMoreAmenities = uniqueAmenities.length > INITIAL_AMENITIES_COUNT;
 
   const goToNextImage = () => {
     if (roomType.images.length > 1) {
@@ -95,6 +116,20 @@ export function RoomTypeCard({
     setDragOffset(0);
   };
 
+  // Quantity handlers
+  const handleQuantityChange = (newQuantity: number) => {
+    const clampedQuantity = Math.max(0, Math.min(newQuantity, availableRooms));
+    addOrUpdateItem({
+      roomTypeId: roomType.id,
+      roomTypeName: name,
+      accommodationId,
+      accommodationName,
+      quantity: clampedQuantity,
+      pricePerNight: roomType.minPrice,
+      capacity: roomType.capacity,
+    });
+  };
+
   // Format capacity text
   const capacityText = roomType.capacity === 1
     ? t.accommodation.capacitySingular
@@ -114,7 +149,7 @@ export function RoomTypeCard({
         {/* Image Slider */}
         <div
           ref={sliderRef}
-          className="relative aspect-[4/3] lg:aspect-auto lg:w-2/5 lg:min-h-[320px] group select-none"
+          className="relative aspect-[4/3] lg:aspect-auto lg:w-2/5 lg:min-h-[360px] group select-none overflow-hidden"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -128,7 +163,7 @@ export function RoomTypeCard({
                   transition: isDragging ? 'none' : 'transform 300ms ease-out',
                 }}
               >
-                {roomType.images.map((image, idx) => (
+                {roomType.images.map((image) => (
                   <div key={image.id} className="relative w-full h-full flex-shrink-0">
                     <Image
                       src={image.url}
@@ -150,7 +185,7 @@ export function RoomTypeCard({
                       e.stopPropagation();
                       goToPrevImage();
                     }}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 text-stone-800 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-md"
+                    className="cursor-pointer absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 text-stone-800 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-md"
                     aria-label={t.common.previous}
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -163,7 +198,7 @@ export function RoomTypeCard({
                       e.stopPropagation();
                       goToNextImage();
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 text-stone-800 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-md"
+                    className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 text-stone-800 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-md"
                     aria-label={t.common.next}
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -190,6 +225,13 @@ export function RoomTypeCard({
                   </div>
                 </>
               )}
+
+              {/* Available rooms badge */}
+              <div className="absolute top-3 right-3 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg shadow-sm">
+                <span className="text-sm font-medium text-stone-700">
+                  {availableRooms} {availableRooms === 1 ? 'room' : 'rooms'}
+                </span>
+              </div>
             </>
           ) : (
             <div className="absolute inset-0 bg-stone-200 flex items-center justify-center">
@@ -212,9 +254,23 @@ export function RoomTypeCard({
 
         {/* Content */}
         <div className="flex-1 p-6 lg:p-8 flex flex-col">
-          <h3 className="text-xl lg:text-2xl font-serif font-semibold text-stone-800 mb-3">
-            {name}
-          </h3>
+          <div className="flex items-start justify-between gap-4 mb-3">
+            <h3 className="text-xl lg:text-2xl font-serif font-semibold text-stone-800">
+              {name}
+            </h3>
+            {/* Prominent capacity badge */}
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-stone-800 text-white rounded-full text-sm font-medium flex-shrink-0">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              <span>{roomType.capacity}</span>
+            </div>
+          </div>
 
           {description && (
             <p className="text-stone-600 mb-4 line-clamp-3">
@@ -222,47 +278,43 @@ export function RoomTypeCard({
             </p>
           )}
 
-          {/* Capacity */}
-          <div className="flex items-center gap-2 text-sm text-stone-600 mb-4">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-              />
-            </svg>
-            <span>{capacityText}</span>
-          </div>
 
-          {/* Amenities */}
+          {/* Amenities with merged room type + accommodation amenities */}
           {displayAmenities.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-6">
-              {displayAmenities.map((amenity) => (
-                <span
-                  key={amenity.id}
-                  className="px-3 py-1.5 bg-stone-100 text-stone-600 text-xs rounded-full"
-                >
-                  {getLocalizedText(amenity.name)}
-                </span>
-              ))}
-              {allAmenities.length > 6 && (
-                <span className="px-3 py-1.5 bg-stone-100 text-stone-600 text-xs rounded-full">
-                  +{allAmenities.length - 6}
-                </span>
-              )}
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-2">
+                {displayAmenities.map((amenity) => (
+                  <span
+                    key={amenity.id}
+                    className="px-3 py-1.5 bg-stone-100 text-stone-600 text-xs rounded-full"
+                  >
+                    {getLocalizedText(amenity.name)}
+                  </span>
+                ))}
+                {hasMoreAmenities && !showAllAmenities && (
+                  <button
+                    onClick={() => setShowAllAmenities(true)}
+                    className="px-3 py-1.5 bg-stone-200 text-stone-700 text-xs rounded-full hover:bg-stone-300 transition-colors"
+                  >
+                    +{uniqueAmenities.length - INITIAL_AMENITIES_COUNT} more
+                  </button>
+                )}
+                {showAllAmenities && hasMoreAmenities && (
+                  <button
+                    onClick={() => setShowAllAmenities(false)}
+                    className="px-3 py-1.5 bg-stone-200 text-stone-700 text-xs rounded-full hover:bg-stone-300 transition-colors"
+                  >
+                    {t.accommodation.showLess}
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Price and CTA */}
+          {/* Price and Quantity Selector */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-stone-100">
             {roomType.minPrice ? (
               <div>
@@ -278,12 +330,42 @@ export function RoomTypeCard({
               <div />
             )}
 
-            <Link
-              href={`/frontend/booking?accommodation=${accommodationId}&room=${roomType.id}`}
-              className="w-full sm:w-auto px-6 py-3 bg-stone-800 text-white text-sm font-medium rounded-xl hover:bg-stone-700 transition-colors text-center shadow-sm hover:shadow-md"
-            >
-              {t.accommodation.bookThisRoom}
-            </Link>
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => handleQuantityChange(quantity - 1)}
+                disabled={quantity <= 0}
+                className={`cursor-pointer w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                  quantity <= 0
+                    ? 'bg-stone-100 text-stone-300 cursor-not-allowed'
+                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                }`}
+                aria-label="Decrease quantity"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                </svg>
+              </button>
+
+              <div className="w-12 text-center">
+                <span className="text-xl font-semibold text-stone-800">{quantity}</span>
+              </div>
+
+              <button
+                onClick={() => handleQuantityChange(quantity + 1)}
+                disabled={quantity >= availableRooms}
+                className={`cursor-pointer w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                  quantity >= availableRooms
+                    ? 'bg-stone-100 text-stone-300 cursor-not-allowed'
+                    : 'bg-stone-800 text-white hover:bg-stone-700'
+                }`}
+                aria-label="Increase quantity"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { FrontendLanguageProvider } from '@/contexts/FrontendLanguageContext';
+import { BookingCartProvider } from '@/contexts/BookingCartContext';
 import { Header, Footer } from '@/components/frontend/layout';
 import { siteConfig } from '@/config';
 
@@ -26,13 +27,15 @@ export default function FrontendLayout({
 }) {
   return (
     <FrontendLanguageProvider>
-      <div className="min-h-screen flex flex-col bg-white">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-      </div>
+      <BookingCartProvider>
+        <div className="min-h-screen flex flex-col bg-white">
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </div>
+      </BookingCartProvider>
     </FrontendLanguageProvider>
   );
 }

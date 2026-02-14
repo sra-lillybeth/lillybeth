@@ -10,7 +10,7 @@ import { AccommodationAmenities } from '@/components/frontend/accommodation/Acco
 import { AccommodationRules } from '@/components/frontend/accommodation/AccommodationRules';
 import { AccommodationLocation } from '@/components/frontend/accommodation/AccommodationLocation';
 import { RoomTypesSection } from '@/components/frontend/accommodation/RoomTypesSection';
-import { FloatingBookButton } from '@/components/frontend/accommodation/FloatingBookButton';
+import { BookingCart } from '@/components/frontend/accommodation/BookingCart';
 import Link from 'next/link';
 
 interface AccommodationImage {
@@ -234,6 +234,8 @@ export function AccommodationDetailPage({ slug, routeLanguage }: AccommodationDe
         <RoomTypesSection
           roomTypes={accommodation.roomTypes}
           accommodationId={accommodation.id}
+          accommodationName={accommodationName}
+          accommodationAmenities={accommodation.amenityCategories.flatMap((cat) => cat.amenities)}
           getLocalizedText={getLocalizedText}
         />
       )}
@@ -247,8 +249,8 @@ export function AccommodationDetailPage({ slug, routeLanguage }: AccommodationDe
         />
       )}
 
-      {/* Floating Book Button */}
-      <FloatingBookButton accommodationId={accommodation.id} />
+      {/* Booking Cart */}
+      <BookingCart />
     </>
   );
 }

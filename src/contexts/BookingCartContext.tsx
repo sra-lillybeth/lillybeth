@@ -1,0 +1,87 @@
+'use client';
+
+import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+
+interface CartItem {
+  roomTypeId: string;
+  roomTypeName: string;
+  accommodationId: string;
+  accommodationName: string;
+  quantity: number;
+  pricePerNight: number | null;
+  capacity: number;
+}
+
+interface BookingCartContextType {
+  items: CartItem[];
+  totalRooms: number;
+  addOrUpdateItem: (item: Omit<CartItem, 'quantity'> & { quantity: number }) => void;
+  removeItem: (roomTypeId: string) => void;
+  clearCart: () => void;
+  getItemQuantity: (roomTypeId: string) => number;
+}
+
+const BookingCartContext = createContext<BookingCartContextType | undefined>(undefined);
+
+export function BookingCartProvider({ children }: { children: ReactNode }) {
+  const [items, setItems] = useState<CartItem[]>([]);
+
+  const addOrUpdateItem = useCallback((item: CartItem) => {
+    setItems((prev) => {
+      const existingIndex = prev.findIndex((i) => i.roomTypeId === item.roomTypeId);
+
+      if (item.quantity <= 0) {
+        // Remove item if quantity is 0 or less
+        return prev.filter((i) => i.roomTypeId !== item.roomTypeId);
+      }
+
+      if (existingIndex >= 0) {
+        // Update existing item
+        const updated = [...prev];
+        updated[existingIndex] = item;
+        return updated;
+      }
+
+      // Add new item
+      return [...prev, item];
+    });
+  }, []);
+
+  const removeItem = useCallback((roomTypeId: string) => {
+    setItems((prev) => prev.filter((i) => i.roomTypeId !== roomTypeId));
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
+
+  const getItemQuantity = useCallback((roomTypeId: string) => {
+    const item = items.find((i) => i.roomTypeId === roomTypeId);
+    return item?.quantity || 0;
+  }, [items]);
+
+  const totalRooms = items.reduce((sum, item) => sum + item.quantity, 0);
+
+  return (
+    <BookingCartContext.Provider
+      value={{
+        items,
+        totalRooms,
+        addOrUpdateItem,
+        removeItem,
+        clearCart,
+        getItemQuantity,
+      }}
+    >
+      {children}
+    </BookingCartContext.Provider>
+  );
+}
+
+export function useBookingCart() {
+  const context = useContext(BookingCartContext);
+  if (!context) {
+    throw new Error('useBookingCart must be used within a BookingCartProvider');
+  }
+  return context;
+}

@@ -59,6 +59,10 @@ export async function GET(
           dateRangePrices: {
             orderBy: { startDate: 'asc' as const },
           },
+          rooms: {
+            where: { isActive: true },
+            select: { id: true },
+          },
         },
       },
     };
@@ -144,6 +148,7 @@ export async function GET(
         description: rt.description,
         capacity: rt.capacity,
         minPrice: rt.minPrice,
+        availableRooms: rt.rooms?.length || 0,
         images: rt.images.map((img) => ({
           id: img.id,
           url: img.url,
