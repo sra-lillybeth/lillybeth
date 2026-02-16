@@ -15,9 +15,9 @@ export function Footer() {
     <footer className="bg-stone-900 text-stone-300">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand Column */}
-          <div className="lg:col-span-1">
+          <div>
             <Link href="/frontend" className="inline-flex items-center gap-3 group">
               <Image
                 src="/lillybeth-ico.webp"
@@ -108,22 +108,10 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Address Column */}
+          {/* Navigation & Language Column */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
-              {t.footer.address.title}
-            </h3>
-            <address className="mt-4 not-italic text-sm text-stone-400 leading-relaxed">
-              {siteConfig.address.street}<br />
-              {siteConfig.address.postalCode} {siteConfig.address.city}<br />
-              {siteConfig.address.country}
-            </address>
-          </div>
-
-          {/* Quick Links Column */}
-          <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
-              {t.footer.quickLinks.title}
+              {t.header.nav.accommodations}
             </h3>
             <ul className="mt-4 space-y-3">
               <li>
@@ -131,23 +119,7 @@ export function Footer() {
                   href={`/frontend/${t.routes.accommodation}`}
                   className="text-sm text-stone-400 hover:text-white transition-colors duration-200"
                 >
-                  {t.header.nav.accommodations}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/frontend/${t.routes.rooms}`}
-                  className="text-sm text-stone-400 hover:text-white transition-colors duration-200"
-                >
-                  {t.header.nav.rooms}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={siteConfig.legal.cancellationPolicyUrl}
-                  className="text-sm text-stone-400 hover:text-white transition-colors duration-200"
-                >
-                  {t.footer.quickLinks.cancellation}
+                  {t.buildings.viewAll}
                 </Link>
               </li>
             </ul>

@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useBookingCart } from '@/contexts/BookingCartContext';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
 
 export function BookingCart() {
-  const { items, totalRooms, removeItem, clearCart } = useBookingCart();
+  const router = useRouter();
+  const { items, dates, totalRooms, removeItem, clearCart } = useBookingCart();
   const { t } = useFrontendLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -25,10 +27,19 @@ export function BookingCart() {
   // Calculate total capacity
   const totalCapacity = items.reduce((sum, item) => sum + item.capacity * item.quantity, 0);
 
+  // Check if we have dates set
+  const hasDates = dates.checkIn && dates.checkOut;
+
+  const handleBookNow = () => {
+    if (hasDates) {
+      router.push('/frontend/booking');
+    }
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
       <div className="max-w-4xl mx-auto px-4 pb-4 pointer-events-auto">
-        <div className="bg-stone-800 text-white rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-stone-800 text-white rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
           {/* Expanded view with item details */}
           {isExpanded && (
             <div className="max-h-[60vh] overflow-y-auto border-b border-stone-700">
@@ -39,9 +50,21 @@ export function BookingCart() {
                     onClick={clearCart}
                     className="text-sm text-stone-400 hover:text-white transition-colors"
                   >
-                    {t.common.close}
+                    {t.booking?.clearCart || 'Clear all'}
                   </button>
                 </div>
+
+                {/* Date info */}
+                {hasDates && (
+                  <div className="flex items-center gap-2 text-sm text-stone-400 pb-3 border-b border-stone-700">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>
+                      {new Date(dates.checkIn!).toLocaleDateString()} — {new Date(dates.checkOut!).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
 
                 {items.map((item) => (
                   <div
@@ -114,9 +137,11 @@ export function BookingCart() {
 
             {/* Right: CTA Button */}
             <button
-              className="px-6 py-3 bg-white text-stone-800 font-semibold rounded-xl hover:bg-stone-100 transition-colors flex-shrink-0"
+              onClick={handleBookNow}
+              disabled={!hasDates}
+              className="px-6 py-3 bg-white text-stone-800 font-semibold rounded-xl hover:bg-stone-100 transition-colors flex-shrink-0 disabled:bg-stone-600 disabled:text-stone-400 disabled:cursor-not-allowed"
             >
-              {t.header.bookNow}
+              {hasDates ? t.header.bookNow : (t.booking?.selectDates || 'Select dates')}
             </button>
           </div>
         </div>

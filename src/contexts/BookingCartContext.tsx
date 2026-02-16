@@ -12,19 +12,27 @@ interface CartItem {
   capacity: number;
 }
 
+interface BookingDates {
+  checkIn: string | null;
+  checkOut: string | null;
+}
+
 interface BookingCartContextType {
   items: CartItem[];
+  dates: BookingDates;
   totalRooms: number;
   addOrUpdateItem: (item: Omit<CartItem, 'quantity'> & { quantity: number }) => void;
   removeItem: (roomTypeId: string) => void;
   clearCart: () => void;
   getItemQuantity: (roomTypeId: string) => number;
+  setDates: (checkIn: string | null, checkOut: string | null) => void;
 }
 
 const BookingCartContext = createContext<BookingCartContextType | undefined>(undefined);
 
 export function BookingCartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [dates, setDatesState] = useState<BookingDates>({ checkIn: null, checkOut: null });
 
   const addOrUpdateItem = useCallback((item: CartItem) => {
     setItems((prev) => {
@@ -53,6 +61,7 @@ export function BookingCartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([]);
+    setDatesState({ checkIn: null, checkOut: null });
   }, []);
 
   const getItemQuantity = useCallback((roomTypeId: string) => {
@@ -60,17 +69,23 @@ export function BookingCartProvider({ children }: { children: ReactNode }) {
     return item?.quantity || 0;
   }, [items]);
 
+  const setDates = useCallback((checkIn: string | null, checkOut: string | null) => {
+    setDatesState({ checkIn, checkOut });
+  }, []);
+
   const totalRooms = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <BookingCartContext.Provider
       value={{
         items,
+        dates,
         totalRooms,
         addOrUpdateItem,
         removeItem,
         clearCart,
         getItemQuantity,
+        setDates,
       }}
     >
       {children}

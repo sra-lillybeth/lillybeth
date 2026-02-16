@@ -8,18 +8,7 @@ import { LanguageSelector } from '../shared/LanguageSelector';
 
 export function Header() {
   const { t } = useFrontendLanguage();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Close mobile menu on resize
   useEffect(() => {
@@ -45,27 +34,25 @@ export function Header() {
     };
   }, [isMobileMenuOpen]);
 
+  // Navigation links - Rooms removed
   const navLinks = [
     { href: '/frontend', label: t.header.nav.home },
     { href: `/frontend/${t.routes.accommodation}`, label: t.header.nav.accommodations },
-    { href: `/frontend/${t.routes.rooms}`, label: t.header.nav.rooms },
   ];
+
+  // Navigate to booking page
+  const handleBookNowClick = () => {
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <>
       <header
-        className={`
-          fixed top-0 left-0 right-0 z-50
-          transition-all duration-300 ease-in-out
-          ${
-            isScrolled
-              ? 'bg-white/95 backdrop-blur-md shadow-sm py-3'
-              : 'bg-transparent py-5'
-          }
-        `}
+        className="fixed top-0 left-0 right-0 z-50 bg-stone-900 py-4"
+        style={{ height: '72px' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+          <div className="flex items-center justify-between h-full">
             {/* Logo */}
             <Link
               href="/frontend"
@@ -78,13 +65,7 @@ export function Header() {
                 height={40}
                 className="rounded-lg"
               />
-              <span
-                className={`
-                  font-serif text-2xl font-semibold tracking-wide
-                  transition-colors duration-300
-                  ${isScrolled ? 'text-stone-800' : 'text-white'}
-                `}
-              >
+              <span className="font-serif text-2xl font-semibold tracking-wide text-white">
                 Lillybeth
               </span>
             </Link>
@@ -95,12 +76,7 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`
-                    text-sm font-medium tracking-wide
-                    transition-colors duration-300
-                    hover:opacity-70
-                    ${isScrolled ? 'text-stone-700' : 'text-white/90'}
-                  `}
+                  className="text-sm font-medium tracking-wide text-white/90 transition-colors duration-300 hover:text-white"
                 >
                   {link.label}
                 </Link>
@@ -113,19 +89,12 @@ export function Header() {
                 variant="dropdown"
                 showFlags={true}
                 showLabels={false}
-                className={isScrolled ? '' : '[&_button]:bg-white/20 [&_button]:border-white/30 [&_button]:text-white'}
+                className="[&_button]:bg-white/10 [&_button]:border-white/20 [&_button]:text-white [&_button]:hover:bg-white/20"
               />
               <Link
-                href="/frontend/booking"
-                className={`
-                  px-5 py-2.5 text-sm font-medium rounded-lg
-                  transition-all duration-300
-                  ${
-                    isScrolled
-                      ? 'bg-stone-800 text-white hover:bg-stone-700'
-                      : 'bg-white text-stone-800 hover:bg-white/90'
-                  }
-                `}
+                href={`/frontend/${t.routes.booking}`}
+                onClick={handleBookNowClick}
+                className="px-5 py-2.5 text-sm font-medium rounded-lg bg-white text-stone-800 hover:bg-stone-100 transition-all duration-300"
               >
                 {t.header.bookNow}
               </Link>
@@ -134,11 +103,7 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`
-                md:hidden p-2 rounded-lg
-                transition-colors duration-300
-                ${isScrolled ? 'text-stone-800' : 'text-white'}
-              `}
+              className="md:hidden p-2 rounded-lg text-white transition-colors duration-300"
               aria-label="Toggle menu"
               aria-expanded={isMobileMenuOpen}
             >
@@ -240,8 +205,8 @@ export function Header() {
             <div className="p-4 border-t border-stone-100 space-y-4">
               <LanguageSelector variant="inline" showFlags={true} showLabels={false} />
               <Link
-                href="/frontend/booking"
-                onClick={() => setIsMobileMenuOpen(false)}
+                href={`/frontend/${t.routes.booking}`}
+                onClick={handleBookNowClick}
                 className="
                   block w-full px-5 py-3 text-center text-sm font-medium
                   bg-stone-800 text-white rounded-lg

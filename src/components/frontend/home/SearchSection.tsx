@@ -1,26 +1,34 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
 import { DateRangePicker } from '../ui/DateRangePicker';
 
 export function SearchSection() {
+  const router = useRouter();
   const { t } = useFrontendLanguage();
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
   const [guests, setGuests] = useState(2);
 
   const handleSearch = () => {
-    // TODO: Implement search logic
-    // Will redirect to booking/rooms page with query params
-    console.log('Search:', { checkIn, checkOut, guests });
+    if (!checkIn || !checkOut) return;
+
+    const params = new URLSearchParams({
+      checkIn: checkIn.toISOString().split('T')[0],
+      checkOut: checkOut.toISOString().split('T')[0],
+      guests: guests.toString(),
+    });
+
+    router.push(`/frontend/search?${params}`);
   };
 
   const incrementGuests = () => setGuests((prev) => Math.min(prev + 1, 20));
   const decrementGuests = () => setGuests((prev) => Math.max(prev - 1, 1));
 
   return (
-    <section className="relative z-30 -mt-24 px-4 sm:px-6 lg:px-8">
+    <section id="search-section" className="relative z-30 -mt-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <div
           className="
@@ -102,15 +110,18 @@ export function SearchSection() {
               <button
                 type="button"
                 onClick={handleSearch}
+                disabled={!checkIn || !checkOut}
                 className="
                   w-full lg:w-auto h-[58px] px-8
                   bg-stone-800 hover:bg-stone-700 active:bg-stone-900
+                  disabled:bg-stone-400 disabled:cursor-not-allowed
                   text-white font-medium
                   rounded-xl
                   transition-all duration-300
                   flex items-center justify-center gap-2
                   shadow-lg hover:shadow-xl
                   hover:-translate-y-0.5 active:translate-y-0
+                  disabled:hover:translate-y-0 disabled:hover:shadow-lg
                 "
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

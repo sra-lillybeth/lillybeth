@@ -29,9 +29,14 @@ export function DateRangePicker({
   checkOut,
   onCheckInChange,
   onCheckOutChange,
-  minDate = new Date(),
+  minDate,
   className = '',
 }: DateRangePickerProps) {
+  // Default minDate to tomorrow (today is not selectable)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  const effectiveMinDate = minDate || tomorrow;
   const { language, t } = useFrontendLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -110,7 +115,7 @@ export function DateRangePicker({
   };
 
   const handleDateClick = (date: Date) => {
-    if (isBeforeDay(date, minDate)) return;
+    if (isBeforeDay(date, effectiveMinDate)) return;
 
     if (!selectingCheckOut || !checkIn) {
       // Selecting check-in
@@ -140,7 +145,7 @@ export function DateRangePicker({
 
   const prevMonth = () => {
     const prev = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1);
-    if (prev >= new Date(minDate.getFullYear(), minDate.getMonth(), 1)) {
+    if (prev >= new Date(effectiveMinDate.getFullYear(), effectiveMinDate.getMonth(), 1)) {
       setCurrentMonth(prev);
     }
   };
@@ -173,7 +178,7 @@ export function DateRangePicker({
         <div className="grid grid-cols-7 gap-px">
           {days.map((date, index) => {
             const isCurrentMonth = date.getMonth() === monthIndex;
-            const isDisabled = isBeforeDay(date, minDate);
+            const isDisabled = isBeforeDay(date, effectiveMinDate);
             const isCheckIn = checkIn && isSameDay(date, checkIn);
             const isCheckOut = checkOut && isSameDay(date, checkOut);
             const isSelected = isCheckIn || isCheckOut;
@@ -302,8 +307,8 @@ export function DateRangePicker({
 
           {/* Selection hint */}
           <div className="mt-4 pt-4 border-t border-stone-100 text-center text-sm text-stone-500">
-            {!checkIn && (language === 'hu' ? 'Válassza ki az érkezés dátumát' : language === 'de' ? 'Anreisedatum wählen' : 'Select check-in date')}
-            {checkIn && !checkOut && (language === 'hu' ? 'Válassza ki a távozás dátumát' : language === 'de' ? 'Abreisedatum wählen' : 'Select check-out date')}
+            {!checkIn && t.search.selectCheckIn}
+            {checkIn && !checkOut && t.search.selectCheckOut}
             {checkIn && checkOut && (
               <button
                 type="button"
@@ -314,7 +319,7 @@ export function DateRangePicker({
                 }}
                 className="text-stone-700 underline hover:no-underline"
               >
-                {language === 'hu' ? 'Dátumok törlése' : language === 'de' ? 'Daten löschen' : 'Clear dates'}
+                {t.search.clearDates}
               </button>
             )}
           </div>

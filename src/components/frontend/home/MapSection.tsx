@@ -1,22 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
-import { siteConfig } from '@/config';
 import { SectionTitle } from '../ui/SectionTitle';
+
+interface BuildingImage {
+  id: string;
+  url: string;
+  alt: string | null;
+}
 
 interface Building {
   id: string;
   name: Record<string, string> | string;
+  slug: string;
   latitude: number | null;
   longitude: number | null;
   address: string | null;
+  images: BuildingImage[];
 }
 
 export function MapSection() {
   const { t, language } = useFrontendLanguage();
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBuildings() {
@@ -29,6 +39,10 @@ export function MapSection() {
           (b: Building) => b.latitude && b.longitude
         );
         setBuildings(buildingsWithCoords);
+        // Select first building by default
+        if (buildingsWithCoords.length > 0) {
+          setSelectedBuildingId(buildingsWithCoords[0].id);
+        }
       } catch (err) {
         console.error('Error fetching buildings for map:', err);
       } finally {
@@ -46,51 +60,28 @@ export function MapSection() {
     return field[language] || field['en'] || Object.values(field)[0] || '';
   };
 
-  // Calculate map center based on buildings or use default
-  const getMapCenter = () => {
-    if (buildings.length === 0) {
-      return siteConfig.maps.defaultCenter;
-    }
+  // Get selected building
+  const selectedBuilding = buildings.find((b) => b.id === selectedBuildingId);
 
-    const validBuildings = buildings.filter(
-      (b) => b.latitude !== null && b.longitude !== null
-    );
-
-    if (validBuildings.length === 0) {
-      return siteConfig.maps.defaultCenter;
-    }
-
-    const avgLat =
-      validBuildings.reduce((sum, b) => sum + (b.latitude || 0), 0) /
-      validBuildings.length;
-    const avgLng =
-      validBuildings.reduce((sum, b) => sum + (b.longitude || 0), 0) /
-      validBuildings.length;
-
-    return { lat: avgLat, lng: avgLng };
-  };
-
-  // Generate Google Maps embed URL
+  // Generate Google Maps embed URL for selected building
   const getMapEmbedUrl = () => {
-    const center = getMapCenter();
-
-    // If we have buildings with coords, create markers
-    if (buildings.length > 0) {
-      // Use the first building for the embed center
-      const firstBuilding = buildings[0];
-      if (firstBuilding.latitude && firstBuilding.longitude) {
-        return `https://www.google.com/maps/embed/v1/place?key=${siteConfig.maps.apiKey}&q=${firstBuilding.latitude},${firstBuilding.longitude}&zoom=${siteConfig.maps.defaultZoom}`;
-      }
+    if (selectedBuilding?.latitude && selectedBuilding?.longitude) {
+      return `https://www.google.com/maps?q=${selectedBuilding.latitude},${selectedBuilding.longitude}&z=15&output=embed`;
     }
-
-    // Fallback to embed without API key using iframe embed
-    return `https://www.google.com/maps?q=${center.lat},${center.lng}&z=${siteConfig.maps.defaultZoom}&output=embed`;
+    // Fallback to first building or default location
+    const firstBuilding = buildings[0];
+    if (firstBuilding?.latitude && firstBuilding?.longitude) {
+      return `https://www.google.com/maps?q=${firstBuilding.latitude},${firstBuilding.longitude}&z=15&output=embed`;
+    }
+    return `https://www.google.com/maps?q=46.9,17.9&z=10&output=embed`;
   };
 
-  // Generate directions URL
-  const getDirectionsUrl = () => {
-    const center = getMapCenter();
-    return `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
+  // Generate directions URL for selected building
+  const getDirectionsUrl = (building: Building) => {
+    if (building.latitude && building.longitude) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${building.latitude},${building.longitude}`;
+    }
+    return '#';
   };
 
   return (
@@ -108,6 +99,7 @@ export function MapSection() {
                 </div>
               ) : (
                 <iframe
+                  key={selectedBuildingId}
                   src={getMapEmbedUrl()}
                   width="100%"
                   height="100%"
@@ -122,61 +114,119 @@ export function MapSection() {
             </div>
           </div>
 
-          {/* Location Info */}
-          <div className="space-y-6">
-            {/* Address Card */}
-            <div className="bg-stone-50 rounded-2xl p-6">
-              <h3 className="font-serif text-xl text-stone-800 mb-4">
-                {t.footer.address.title}
-              </h3>
-              <address className="not-italic text-stone-600 leading-relaxed">
-                {siteConfig.address.street}<br />
-                {siteConfig.address.postalCode} {siteConfig.address.city}<br />
-                {siteConfig.address.country}
-              </address>
+          {/* Location Info - All Accommodations */}
+          <div className="space-y-4">
+            <h3 className="font-serif text-xl text-stone-800 mb-4">
+              {t.accommodation?.titlePlural || 'Our Locations'}
+            </h3>
 
-              <a
-                href={getDirectionsUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  inline-flex items-center gap-2 mt-4
-                  text-stone-800 font-medium
-                  hover:text-stone-600
-                  transition-colors duration-200
-                "
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                {t.map.getDirections}
-              </a>
-            </div>
+            {/* Accommodation Cards */}
+            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+              {buildings.map((building) => {
+                const isSelected = building.id === selectedBuildingId;
+                const name = getLocalizedText(building.name);
+                const firstImage = building.images?.[0];
 
-            {/* Buildings List */}
-            {buildings.length > 0 && (
-              <div className="bg-stone-50 rounded-2xl p-6">
-                <h3 className="font-serif text-xl text-stone-800 mb-4">
-                  {t.buildings.title}
-                </h3>
-                <ul className="space-y-3">
-                  {buildings.map((building) => (
-                    <li key={building.id} className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-stone-400 mt-2 flex-shrink-0" />
-                      <div>
-                        <span className="text-stone-700 font-medium">
-                          {getLocalizedText(building.name)}
-                        </span>
+                return (
+                  <div
+                    key={building.id}
+                    onClick={() => setSelectedBuildingId(building.id)}
+                    className={`
+                      group cursor-pointer rounded-xl p-4 transition-all duration-300
+                      ${isSelected
+                        ? 'bg-stone-800 text-white shadow-lg scale-[1.02]'
+                        : 'bg-stone-50 hover:bg-stone-100 text-stone-800'
+                      }
+                    `}
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Thumbnail */}
+                      {firstImage ? (
+                        <div className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
+                          <Image
+                            src={firstImage.url}
+                            alt={firstImage.alt || name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className={`w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                          isSelected ? 'bg-white/20' : 'bg-stone-200'
+                        }`}>
+                          <svg className={`w-6 h-6 ${isSelected ? 'text-white' : 'text-stone-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
+                        </div>
+                      )}
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className={`font-medium truncate ${isSelected ? 'text-white' : 'text-stone-800'}`}>
+                          {name}
+                        </h4>
                         {building.address && (
-                          <p className="text-stone-500 text-sm mt-0.5">
+                          <p className={`text-sm mt-0.5 truncate ${isSelected ? 'text-white/80' : 'text-stone-500'}`}>
                             {building.address}
                           </p>
                         )}
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-3 mt-2">
+                          <a
+                            href={getDirectionsUrl(building)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className={`
+                              inline-flex items-center gap-1 text-xs font-medium
+                              ${isSelected ? 'text-white/90 hover:text-white' : 'text-stone-600 hover:text-stone-800'}
+                              transition-colors
+                            `}
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {t.map.getDirections}
+                          </a>
+                          <Link
+                            href={`/frontend/${t.routes.accommodation}/${building.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`
+                              inline-flex items-center gap-1 text-xs font-medium
+                              ${isSelected ? 'text-white/90 hover:text-white' : 'text-stone-600 hover:text-stone-800'}
+                              transition-colors
+                            `}
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                            {t.buildings.viewDetails}
+                          </Link>
+                        </div>
                       </div>
-                    </li>
-                  ))}
-                </ul>
+
+                      {/* Selected indicator */}
+                      {isSelected && (
+                        <div className="flex-shrink-0">
+                          <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Empty state */}
+            {!isLoading && buildings.length === 0 && (
+              <div className="text-center py-8 text-stone-500">
+                <svg className="w-12 h-12 mx-auto mb-3 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <p>{t.common.loading}</p>
               </div>
             )}
           </div>

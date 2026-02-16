@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
 import { DateRangePicker } from '@/components/frontend/ui/DateRangePicker';
 
@@ -12,21 +13,23 @@ interface AccommodationBookingSearchProps {
 export function AccommodationBookingSearch({
   accommodationId,
 }: AccommodationBookingSearchProps) {
+  const router = useRouter();
   const { t } = useFrontendLanguage();
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
   const [guests, setGuests] = useState(2);
 
   const handleSearch = () => {
-    // Build search URL with parameters
-    const params = new URLSearchParams();
-    if (checkIn) params.set('checkIn', checkIn.toISOString().split('T')[0]);
-    if (checkOut) params.set('checkOut', checkOut.toISOString().split('T')[0]);
-    params.set('guests', guests.toString());
-    params.set('accommodation', accommodationId);
+    if (!checkIn || !checkOut) return;
 
-    // Navigate to booking page with search params
-    window.location.href = `/frontend/booking?${params.toString()}`;
+    const params = new URLSearchParams({
+      checkIn: checkIn.toISOString().split('T')[0],
+      checkOut: checkOut.toISOString().split('T')[0],
+      guests: guests.toString(),
+      accommodationId: accommodationId,
+    });
+
+    router.push(`/frontend/search?${params}`);
   };
 
   return (
@@ -59,7 +62,7 @@ export function AccommodationBookingSearch({
                   onChange={(e) => setGuests(Number(e.target.value))}
                   className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-stone-800 appearance-none cursor-pointer hover:border-stone-300 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-stone-400"
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((num) => (
                     <option key={num} value={num}>
                       {num} {num === 1 ? t.search.guestSingular : t.search.guestPlural}
                     </option>
@@ -80,9 +83,10 @@ export function AccommodationBookingSearch({
             <div>
               <button
                 onClick={handleSearch}
-                className="w-full px-6 py-3 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-700 transition-colors shadow-lg hover:shadow-xl"
+                disabled={!checkIn || !checkOut}
+                className="w-full px-6 py-3 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-700 transition-colors shadow-lg hover:shadow-xl disabled:bg-stone-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {t.search.searchButton}
+                <span>{t.search.searchButton}</span>
               </button>
             </div>
           </div>
