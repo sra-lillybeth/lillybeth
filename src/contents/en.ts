@@ -53,6 +53,8 @@ export const en = {
     anyAccommodation: 'Any accommodation',
     selectAccommodation: 'Select at least one accommodation to see results',
     showAll: 'Show all',
+    startSearchTitle: 'Find Your Perfect Stay',
+    startSearchDescription: 'Select your dates and number of guests above to see available accommodations.',
   },
 
   // Buildings Section

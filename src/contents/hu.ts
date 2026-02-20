@@ -53,6 +53,8 @@ export const hu = {
     anyAccommodation: 'Bármely szállás',
     selectAccommodation: 'Válasszon ki legalább egy szállást az eredmények megtekintéséhez',
     showAll: 'Összes megjelenítése',
+    startSearchTitle: 'Találja meg tökéletes szállását',
+    startSearchDescription: 'Válassza ki a dátumokat és a vendégek számát a fenti mezőkben az elérhető szállások megtekintéséhez.',
   },
 
   // Buildings Section

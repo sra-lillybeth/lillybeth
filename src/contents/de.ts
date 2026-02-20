@@ -53,6 +53,8 @@ export const de = {
     anyAccommodation: 'Alle Unterkünfte',
     selectAccommodation: 'Wählen Sie mindestens eine Unterkunft aus, um Ergebnisse zu sehen',
     showAll: 'Alle anzeigen',
+    startSearchTitle: 'Finden Sie Ihren perfekten Aufenthalt',
+    startSearchDescription: 'Wählen Sie oben Ihre Daten und die Anzahl der Gäste aus, um verfügbare Unterkünfte zu sehen.',
   },
 
   // Buildings Section

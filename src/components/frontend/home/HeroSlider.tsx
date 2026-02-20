@@ -1,9 +1,52 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
-import { heroImages, heroConfig } from '@/config';
+import { heroImages, heroConfig, type HeroMedia } from '@/config';
+
+// VideoSlide component to handle play/pause and restart
+function VideoSlide({
+  src,
+  alt,
+  isActive,
+  onEnded,
+}: {
+  src: string;
+  alt: string;
+  isActive: boolean;
+  onEnded: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isActive) {
+      // Reset to beginning and play when becoming active
+      video.currentTime = 0;
+      video.play().catch(() => {
+        // Autoplay might be blocked, ignore error
+      });
+    } else {
+      // Pause when not active
+      video.pause();
+    }
+  }, [isActive]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      muted
+      playsInline
+      onEnded={isActive ? onEnded : undefined}
+      className="absolute inset-0 w-full h-full object-cover"
+      aria-label={alt}
+    />
+  );
+}
 
 export function HeroSlider() {
   const { t } = useFrontendLanguage();
@@ -37,13 +80,24 @@ export function HeroSlider() {
     setTimeout(() => setIsTransitioning(false), heroConfig.transitionDuration);
   }, [currentIndex, isTransitioning]);
 
-  // Auto-play functionality
+  // Check if current slide is a video
+  const currentMedia = heroImages[currentIndex];
+  const isCurrentSlideVideo = currentMedia?.type === 'video';
+
+  // Auto-play functionality (only for images, videos advance on end)
   useEffect(() => {
     if (!isAutoPlaying || heroConfig.autoPlayInterval === 0) return;
+    // Skip auto-play interval for videos - they advance when they end
+    if (isCurrentSlideVideo) return;
 
     const interval = setInterval(nextSlide, heroConfig.autoPlayInterval);
     return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide]);
+  }, [isAutoPlaying, nextSlide, isCurrentSlideVideo]);
+
+  // Handle video end - advance to next slide
+  const handleVideoEnded = useCallback(() => {
+    nextSlide();
+  }, [nextSlide]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -80,9 +134,9 @@ export function HeroSlider() {
       aria-label="Hero image slider"
     >
       {/* Slides */}
-      {heroImages.map((image, index) => (
+      {heroImages.map((media, index) => (
         <div
-          key={image.id}
+          key={media.id}
           className={`
             absolute inset-0 transition-opacity
             ${heroConfig.transitionType === 'fade' ? 'duration-700' : 'duration-500'}
@@ -93,15 +147,24 @@ export function HeroSlider() {
           }}
           aria-hidden={index !== currentIndex}
         >
-          {/* Image */}
-          <Image
-            src={image.src}
-            alt={image.alt}
-            fill
-            priority={index === 0}
-            className="object-cover"
-            sizes="100vw"
-          />
+          {/* Image or Video */}
+          {media.type === 'video' ? (
+            <VideoSlide
+              src={media.src}
+              alt={media.alt}
+              isActive={index === currentIndex}
+              onEnded={handleVideoEnded}
+            />
+          ) : (
+            <Image
+              src={media.src}
+              alt={media.alt}
+              fill
+              priority={index === 0}
+              className="object-cover"
+              sizes="100vw"
+            />
+          )}
 
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/40" />

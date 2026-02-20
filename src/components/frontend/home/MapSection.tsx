@@ -63,17 +63,22 @@ export function MapSection() {
   // Get selected building
   const selectedBuilding = buildings.find((b) => b.id === selectedBuildingId);
 
-  // Generate Google Maps embed URL for selected building
+  // Generate Google Maps embed URL with marker for selected building
   const getMapEmbedUrl = () => {
+    // If we have a selected building, show it with a labeled marker
     if (selectedBuilding?.latitude && selectedBuilding?.longitude) {
-      return `https://www.google.com/maps?q=${selectedBuilding.latitude},${selectedBuilding.longitude}&z=15&output=embed`;
+      const name = getLocalizedText(selectedBuilding.name);
+      // Using the maps embed API with place name for better marker display
+      return `https://maps.google.com/maps?q=${selectedBuilding.latitude},${selectedBuilding.longitude}&t=m&z=15&output=embed&iwloc=near&q=${encodeURIComponent(name)}`;
     }
-    // Fallback to first building or default location
+    // Fallback: show first building
     const firstBuilding = buildings[0];
     if (firstBuilding?.latitude && firstBuilding?.longitude) {
-      return `https://www.google.com/maps?q=${firstBuilding.latitude},${firstBuilding.longitude}&z=15&output=embed`;
+      const name = getLocalizedText(firstBuilding.name);
+      return `https://maps.google.com/maps?q=${firstBuilding.latitude},${firstBuilding.longitude}&t=m&z=15&output=embed&iwloc=near&q=${encodeURIComponent(name)}`;
     }
-    return `https://www.google.com/maps?q=46.9,17.9&z=10&output=embed`;
+    // Default location (Lake Balaton area)
+    return `https://maps.google.com/maps?q=46.85,17.85&t=m&z=11&output=embed`;
   };
 
   // Generate directions URL for selected building

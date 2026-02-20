@@ -89,10 +89,10 @@ export function Header() {
                 variant="dropdown"
                 showFlags={true}
                 showLabels={false}
-                className="[&_button]:bg-white/10 [&_button]:border-white/20 [&_button]:text-white [&_button]:hover:bg-white/20"
+                dark={true}
               />
               <Link
-                href={`/frontend/${t.routes.booking}`}
+                href="/frontend/search"
                 onClick={handleBookNowClick}
                 className="px-5 py-2.5 text-sm font-medium rounded-lg bg-white text-stone-800 hover:bg-stone-100 transition-all duration-300"
               >
@@ -205,7 +205,7 @@ export function Header() {
             <div className="p-4 border-t border-stone-100 space-y-4">
               <LanguageSelector variant="inline" showFlags={true} showLabels={false} />
               <Link
-                href={`/frontend/${t.routes.booking}`}
+                href="/frontend/search"
                 onClick={handleBookNowClick}
                 className="
                   block w-full px-5 py-3 text-center text-sm font-medium

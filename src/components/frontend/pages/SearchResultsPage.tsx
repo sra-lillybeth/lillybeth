@@ -89,16 +89,19 @@ export function SearchResultsPage() {
   const { t, language } = useFrontendLanguage();
   const { addOrUpdateItem, clearCart, setDates } = useBookingCart();
 
-  const [loading, setLoading] = useState(true);
-  const [results, setResults] = useState<SearchResponse | null>(null);
-  const [showModifySearch, setShowModifySearch] = useState(false);
-  const [selectedAccommodationIds, setSelectedAccommodationIds] = useState<string[]>([]);
-
   // Parse search params
   const checkInParam = searchParams.get('checkIn');
   const checkOutParam = searchParams.get('checkOut');
   const guestsParam = searchParams.get('guests');
   const accommodationIdParam = searchParams.get('accommodationId');
+
+  // Check if this is an empty search (no params provided)
+  const isEmptySearch = !checkInParam || !checkOutParam || !guestsParam;
+
+  const [loading, setLoading] = useState(!isEmptySearch);
+  const [results, setResults] = useState<SearchResponse | null>(null);
+  const [showModifySearch, setShowModifySearch] = useState(isEmptySearch);
+  const [selectedAccommodationIds, setSelectedAccommodationIds] = useState<string[]>([]);
 
   const [modifyCheckIn, setModifyCheckIn] = useState<Date | null>(
     checkInParam ? new Date(checkInParam) : null
@@ -254,9 +257,9 @@ export function SearchResultsPage() {
     : false;
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-32 pt-20">
+    <div className="min-h-screen bg-stone-50 pb-32 pt-18">
       {/* Search Summary Header */}
-      <div className="bg-stone-900 border-b border-stone-700 sticky top-[72px] z-30">
+      <div className="bg-stone-800 border-b border-stone-700 sticky top-18 z-30">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -337,8 +340,10 @@ export function SearchResultsPage() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {loading ? (
           <SearchResultsLoading />
+        ) : isEmptySearch ? (
+          <SearchResultsEmpty guests={guests} isEmptySearch={true} />
         ) : !hasResults ? (
-          <SearchResultsEmpty guests={guests} />
+          <SearchResultsEmpty guests={guests} isEmptySearch={false} />
         ) : (
           <div className="space-y-8">
             {/* Best Match Card */}

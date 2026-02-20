@@ -1,59 +1,60 @@
-## 9. Language consistency issues
+## 13. Thank you page after booking
 
 Current issue:
-- In several places labels like “guests”, “rooms”, etc. are still shown in English even when HU or DE is selected.
+- After completing a booking, the user is redirected back to the homepage.
+- There is no dedicated Thank You page.
 
 Required behavior:
-- ALL user-facing texts must be translated based on the selected language.
-- This includes:
-  - Form labels (guests, rooms, dates, booking, etc.)
-  - Buttons
-  - Section titles
-  - Helper texts
-  - Empty states
-- There must be no hardcoded English strings left in UI components.
-- All frontend static texts must come from the contents folder (per-language files).
+- After successful booking submission, redirect to a dedicated Thank You page (e.g. `/booking/thank-you`).
+- The Thank You page must display:
+  - Thank you message (translated)
+  - Booking reference / ID
+  - Guest name
+  - Check-in date
+  - Check-out date
+  - Arrival time (if provided)
+  - Selected accommodation(s) and room type(s)
+  - Final total amount (EUR + HUF if custom HUF price was set)
+- The page must be responsive and styled consistently with the site design.
+- Provide a clear CTA to go back to homepage or to view accommodations.
 
 ---
 
-## 10. Footer cleanup
+## 14. Header “Booking now” button routing
 
 Current behavior:
-- Footer contains “Quick links” and “Address” sections.
+- The “Booking now” button in the header does not point to the search page.
 
-Required change:
-- Remove:
-  - Quick links section
-  - Address section
-- Keep only:
-  - Logo
-  - Basic navigation
-  - Copyright
+Required behavior:
+- The header “Booking now” button must navigate to:
+  - `/search`
+- The search page must allow users to search available accommodations.
 
 ---
 
-## 11. Header booking button route
+## 15. Google Maps marker on accommodations page
 
-Current behavior:
-- Header “Booking” button behavior is inconsistent.
+Current issue:
+- Google Maps is rendered on the accommodations page.
+- No marker is displayed for the accommodation location.
 
 Required behavior:
-- Clicking the header “Booking” button must always navigate to:
-  - `/booking`
-- The booking page must open with the search form visible.
+- Display a visible marker for each accommodation on the map.
+- Marker position must use:
+  - Latitude & longitude from the building data (admin-provided)
+- Marker should show accommodation name on hover / click.
 
 ---
 
-## 12. Date picker restriction
+## 16. Language selector contrast bug in header
 
-Current behavior:
-- Users can select today’s date.
+Current issue:
+- When the language selector dropdown is open in the header, the text is not visible (white text on white background).
 
 Required behavior:
-- Today’s date must NOT be selectable.
-- The earliest selectable date must always be:
-  - Tomorrow
-- This rule must apply to:
-  - Homepage search
-  - Accommodation page search
-  - Booking page search
+- Fix contrast so all language options are clearly readable when the dropdown is open.
+- Ensure:
+  - Proper background color
+  - Proper text color
+  - Hover and active states are visible
+- Must work in all themes / screen sizes.

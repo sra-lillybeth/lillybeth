@@ -14,6 +14,7 @@ interface LanguageSelectorProps {
   showFlags?: boolean;
   showLabels?: boolean;
   className?: string;
+  dark?: boolean;
 }
 
 export function LanguageSelector({
@@ -21,6 +22,7 @@ export function LanguageSelector({
   showFlags = true,
   showLabels = true,
   className = '',
+  dark = false,
 }: LanguageSelectorProps) {
   const { language, setLanguage } = useFrontendLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -81,14 +83,14 @@ export function LanguageSelector({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="
+        className={`
           flex items-center gap-2 px-3 py-2 text-sm font-medium
-          text-stone-700 hover:text-stone-900
-          bg-white/80 hover:bg-white
-          border border-stone-200 rounded-lg
-          transition-all duration-200
-          shadow-sm hover:shadow
-        "
+          rounded-lg transition-all duration-200
+          ${dark
+            ? 'text-white bg-white/10 border border-white/20 hover:bg-white/20'
+            : 'text-stone-700 hover:text-stone-900 bg-white/80 hover:bg-white border border-stone-200 shadow-sm hover:shadow'
+          }
+        `}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
@@ -122,12 +124,12 @@ export function LanguageSelector({
                 setIsOpen(false);
               }}
               className={`
-                w-full flex items-center gap-2 px-4 py-2 text-sm text-left
+                w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left
                 transition-colors duration-150
                 ${
                   language === lang
                     ? 'bg-stone-100 text-stone-900 font-medium'
-                    : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                    : 'text-stone-700 hover:bg-stone-50 hover:text-stone-900'
                 }
               `}
               role="option"
