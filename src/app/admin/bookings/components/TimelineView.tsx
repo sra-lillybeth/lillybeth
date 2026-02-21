@@ -269,19 +269,32 @@ export default function TimelineView({
 
   const dates = generateDates()
 
-  // Calculate booking position
+  // Calculate booking position with proper clipping to visible range
   const getBookingPosition = (booking: Booking) => {
     const checkIn = new Date(booking.checkIn)
     const checkOut = new Date(booking.checkOut)
     const timelineStart = new Date(startDate)
 
+    // Calculate day differences from timeline start
     const startDiff = Math.floor((checkIn.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24))
     const endDiff = Math.floor((checkOut.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24))
 
-    const left = startDiff * DAY_WIDTH + DAY_WIDTH / 2
-    const width = (endDiff - startDiff) * DAY_WIDTH
+    // Clip to visible range: [0, daysToShow]
+    const effectiveStart = Math.max(0, startDiff)
+    const effectiveEnd = Math.min(daysToShow, endDiff)
 
-    return { left, width }
+    // If booking doesn't overlap with visible range, return null indicator
+    if (effectiveEnd <= effectiveStart) {
+      return { left: 0, width: 0, visible: false }
+    }
+
+    // Calculate position based on clipped range
+    // Add DAY_WIDTH/2 offset only if we're showing the actual booking start
+    const startOffset = startDiff >= 0 ? DAY_WIDTH / 2 : 0
+    const left = effectiveStart * DAY_WIDTH + startOffset
+    const width = (effectiveEnd - effectiveStart) * DAY_WIDTH - (startDiff >= 0 ? 0 : startOffset)
+
+    return { left, width, visible: true }
   }
 
   // Navigate timeline
@@ -1123,11 +1136,12 @@ export default function TimelineView({
                 const rowTop = calculateRowTop(rowIndex)
 
                 return roomBookings.map((booking) => {
-                  const { left, width } = getBookingPosition(booking)
+                  const { left, width, visible } = getBookingPosition(booking)
                   const colors = SOURCE_COLORS[booking.source]
                   const statusClass = TIMELINE_STATUS_OPACITY[booking.status]
 
-                  if (left + width < 0 || left > dates.length * DAY_WIDTH) return null
+                  // Skip bookings outside visible range
+                  if (!visible) return null
 
                   const isDragging = draggingBooking?.id === booking.id
                   const isSiblingHighlighted = isGroupSibling(booking.id)
@@ -1151,9 +1165,9 @@ export default function TimelineView({
                         isDragging || isSiblingDragging ? 'opacity-50 cursor-grabbing' : ''
                       } ${isSiblingHighlighted ? 'ring-2 ring-indigo-500 ring-offset-1 z-20' : ''} ${isGrouped ? 'border-l-4 border-l-indigo-500' : ''}`}
                       style={{
-                        left: Math.max(0, left),
+                        left,
                         top: rowTop + (viewMode === 'monthly' ? 2 : 4),
-                        width: Math.min(width, dates.length * DAY_WIDTH - left),
+                        width,
                         height: ROOM_HEIGHT - (viewMode === 'monthly' ? 4 : 8),
                       }}
                       onClick={(e) => {

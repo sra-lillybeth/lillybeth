@@ -266,13 +266,15 @@ export default function BuildingDetailPage({ params }: { params: Promise<{ id: s
   }
 
   const handleImageUpload = (image: { url: string; filename: string }) => {
-    const newImage: GalleryImage = {
-      id: `temp-${Date.now()}`,
-      url: image.url,
-      filename: image.filename,
-      order: images.length,
-    }
-    setImages([...images, newImage])
+    setImages(prevImages => {
+      const newImage: GalleryImage = {
+        id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        url: image.url,
+        filename: image.filename,
+        order: prevImages.length,
+      }
+      return [...prevImages, newImage]
+    })
   }
 
   const handleImageReorder = (reorderedImages: GalleryImage[]) => {
