@@ -60,7 +60,7 @@ const VIEW_MODE_CONFIG = {
     dayWidth: 100,
     roomHeight: 50,
     headerRowHeight: 36,
-    roomColumnWidth: 160,
+    roomColumnWidth: 110,
     headerHeight: 70,
     defaultDays: 14,
     showFullLabels: true,
@@ -69,7 +69,7 @@ const VIEW_MODE_CONFIG = {
     dayWidth: 32,
     roomHeight: 36,
     headerRowHeight: 28,
-    roomColumnWidth: 140,
+    roomColumnWidth: 100,
     headerHeight: 54,
     defaultDays: 90,
     showFullLabels: false,
@@ -78,7 +78,7 @@ const VIEW_MODE_CONFIG = {
     dayWidth: 80,
     roomHeight: 50,
     headerRowHeight: 36,
-    roomColumnWidth: 160,
+    roomColumnWidth: 110,
     headerHeight: 70,
     defaultDays: 30,
     showFullLabels: true,
@@ -1012,7 +1012,7 @@ export default function TimelineView({
                   key={`room-${row.room.id}`}
                   className={`border-b border-stone-100 flex items-center ${
                     !row.room.isActive ? 'bg-stone-50' : ''
-                  } ${viewMode === 'monthly' ? 'px-2 pl-5' : 'px-3 pl-8'}`}
+                  } ${viewMode === 'monthly' ? 'px-2 pl-5' : 'px-3 pl-3'}`}
                   style={{ height: ROOM_HEIGHT }}
                 >
                   <div className="min-w-0 flex items-center gap-2">

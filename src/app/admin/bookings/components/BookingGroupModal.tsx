@@ -234,6 +234,8 @@ export default function BookingGroupModal({
   useEffect(() => {
     if (isOpen && groupId) {
       fetchGroup()
+    } else if (isOpen && !groupId) {
+      setLoading(false)
     }
   }, [isOpen, groupId])
 
@@ -363,6 +365,7 @@ export default function BookingGroupModal({
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
+      setLoading(true)
       setGroup(null)
       setGuestName('')
       setGuestEmail('')
@@ -827,8 +830,8 @@ export default function BookingGroupModal({
                                 <div className="flex items-center gap-4">
                                   <span className="text-sm text-stone-600 flex items-center gap-1 pl-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                         stroke-linejoin="round"
+                                         fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                                         strokeLinejoin="round"
                                          className="lucide lucide-user-round-icon lucide-user-round"><circle cx="12"
                                                                                                              cy="8"
                                                                                                              r="5"/><path

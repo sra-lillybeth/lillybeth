@@ -378,7 +378,9 @@ export async function GET(request: NextRequest) {
         status: group.status,
         paymentStatus: group.paymentStatus,
         notes: group.notes,
-        totalAmount: calculatedGroupTotal > 0 ? calculatedGroupTotal : group.totalAmount, // Prefer calculated
+        totalAmount: group.hasCustomFinalAmount && group.totalAmount !== null
+          ? group.totalAmount
+          : calculatedGroupTotal > 0 ? calculatedGroupTotal : group.totalAmount,
         hasCustomHufPrice: group.hasCustomHufPrice,
         customHufPrice: group.customHufPrice,
         invoiceSent: group.invoiceSent,

@@ -1,62 +1,46 @@
-## Guest count per room booking (Frontend + Admin)
+## 11. Group booking edit bug + custom final amount display
+
+### 11.1 "Edit full group booking" not loading
 
 Problem:
-Currently, the system only knows the room type capacity (max guests),
-but not how many guests will actually stay in each booked room.
-This causes incorrect pricing for additional prices configured as /guest,
-and missing data about real occupancy.
+- In Calendar view, when clicking on one room of a group booking,
+  the "Edit full group booking" button appears.
+- Clicking it should open the group booking edit view.
+- Currently, it does not load.
+- Only loader spins indefinitely.
 
-New requirement:
-For every booked room (single booking and grouped booking),
-we must store and display the actual guest count per room.
+Expected behavior:
+- Clicking "Edit full group booking" must:
+  - Navigate to the correct group booking edit route.
+  - Load full group booking data.
+  - Populate all rooms inside the group.
+- Loader must stop when data is loaded.
+- Proper error handling if API fails.
 
-Functional requirements:
+Check:
+- Routing parameter (groupBookingId)
+- API endpoint correctness
+- Loading state handling
+- Infinite loading condition
 
-### 1. Guest count input per room
-- On both Frontend (booking flow) and Admin (create/edit booking, group booking):
-  - Each room booking must have a guest count selector (stepper / counter input).
-  - Default value must be the room type’s max guest capacity.
-  - Min value: 1
-  - Max value: roomType.maxGuests
+---
 
-### 2. Pricing logic change for /guest additional prices
-- Additional prices configured as:
-  - `/guest` must be calculated based on the selected guest count for that room.
-- This applies to:
-  - Frontend booking summary
-  - Final amount calculation
-  - Admin booking price calculation
-  - Group booking calculation
+### 11.2 Custom Final amount not reflected in bookings list
 
-### 3. Data model changes
-- Store guestCount per room booking:
-  - Single booking → guestCount on booking room entry
-  - Group booking → guestCount per room inside the group
-- Backend payload must include guestCount for each booked room.
-- Backend must persist this value.
+Problem:
+- In group booking, when overriding the Final amount (custom price),
+  the value is saved.
+- However, in the bookings list, the Amount column does NOT show
+  this overridden value.
+- Single booking already behaves correctly.
 
-### 4. UI display
-- Everywhere a room booking is shown (Frontend + Admin):
-  - Display: "Guests in room: X"
-- In Admin:
-  - Calendar view
-  - Booking list
-  - Booking detail
-  - Group booking detail
-- In Frontend:
-  - Booking summary
-  - Thank you page
-  - (Later: booking confirmation email)
+Expected behavior:
+- If group booking has custom Final amount:
+  - That value must be displayed in the bookings list Amount column.
+- If no custom override:
+  - Display calculated amount.
+- Behavior must match single booking logic.
 
-### 5. Editing behavior
-- Guest count must be editable:
-  - On Frontend before final booking
-  - In Admin when editing booking / group booking
-- Changing guest count must immediately recalculate:
-  - /guest additional prices
-  - Final total amount
-
-### 6. Validation
-- guestCount cannot exceed roomType.maxGuests
-- guestCount must be >= 1
-- If backend receives invalid guestCount → return validation error
+Rules:
+- No fallback to calculated price if custom price exists.
+- Ensure correct field mapping in API response and frontend list view.
