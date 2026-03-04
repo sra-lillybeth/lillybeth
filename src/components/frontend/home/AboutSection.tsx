@@ -4,6 +4,13 @@ import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { SectionTitle } from '../ui/SectionTitle';
 
+function renderBrand(text: string) {
+  const parts = text.split('®');
+  return parts.map((part, i) => (
+    <span key={i}>{part}{i < parts.length - 1 ? <sup>®</sup> : null}</span>
+  ));
+}
+
 export function AboutSection() {
   const { t } = useFrontendLanguage();
   const { ref: contentRef, isVisible } = useScrollAnimation<HTMLDivElement>({
@@ -17,7 +24,7 @@ export function AboutSection() {
   return (
     <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
       <div className="max-w-4xl mx-auto">
-        <SectionTitle title={t.about.title} subtitle={t.about.subtitle} />
+        <SectionTitle title={renderBrand(t.about.title)} subtitle={t.about.subtitle} />
 
         {/* Content */}
         <div

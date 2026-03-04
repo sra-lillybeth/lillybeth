@@ -76,7 +76,7 @@ export function RoomCombinationCard({
                 </span>
               </div>
               <span className="text-stone-500 text-xs">
-                {item.capacity} {item.capacity === 1 ? t.search.guestSingular : t.search.guestPlural}
+                {t.common.max} {item.capacity} {item.capacity === 1 ? t.search.guestSingular : t.search.guestPlural}
               </span>
             </div>
           ))}
@@ -91,7 +91,7 @@ export function RoomCombinationCard({
           <div className="flex items-center justify-between text-sm mb-1">
             <span className="text-stone-500">{t.search.totalCapacity || 'Total Capacity'}</span>
             <span className="font-semibold text-stone-800">
-              {combination.totalCapacity} {t.search.guestPlural}
+              {t.common.max} {combination.totalCapacity} {t.search.guestPlural}
             </span>
           </div>
           {combination.totalPricePerNight > 0 && (

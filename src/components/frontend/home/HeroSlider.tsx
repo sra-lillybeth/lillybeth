@@ -5,6 +5,13 @@ import Image from 'next/image';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
 import { heroImages, heroConfig, type HeroMedia } from '@/config';
 
+function renderBrand(text: string) {
+  const parts = text.split('®');
+  return parts.map((part, i) => (
+    <span key={i}>{part}{i < parts.length - 1 ? <sup>®</sup> : null}</span>
+  ));
+}
+
 // VideoSlide component to handle play/pause and restart
 function VideoSlide({
   src,
@@ -175,7 +182,7 @@ export function HeroSlider() {
       <div className="absolute inset-0 z-20 flex items-center justify-center">
         <div className="text-center px-4 max-w-4xl mx-auto">
           <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-white mb-6 tracking-wide">
-            {t.hero.headline}
+            {renderBrand(t.hero.headline)}
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto">
             {t.hero.subtitle}

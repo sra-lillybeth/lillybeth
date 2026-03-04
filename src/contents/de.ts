@@ -4,6 +4,7 @@ export const de = {
     accommodation: 'unterkunft',
     rooms: 'zimmer',
     booking: 'buchung',
+    about: 'uber-uns',
   },
 
   // Header
@@ -11,6 +12,7 @@ export const de = {
     nav: {
       home: 'Startseite',
       accommodations: 'Unterkünfte',
+      about: 'Über uns',
       rooms: 'Zimmer',
       contact: 'Kontakt',
     },
@@ -19,7 +21,7 @@ export const de = {
 
   // Hero Section
   hero: {
-    headline: 'Lillybeth Gästehäuser',
+    headline: 'Lillybeth® Gästehäuser',
     subtitle: 'Premium Aufenthalt am Plattensee',
     scrollDown: 'Scrollen zum Entdecken',
   },
@@ -64,19 +66,29 @@ export const de = {
     viewAll: 'Alle Häuser ansehen',
     viewDetails: 'Details ansehen',
     learnMore: 'Mehr erfahren',
-    capacity: 'Bis zu {count} Gäste',
-    capacitySingular: '1 Gast',
+    capacity: 'max {count} Gäste',
+    capacitySingular: 'max 1 Gast',
   },
 
-  // About Section
+  // About Section (homepage)
   about: {
-    title: 'Über Lillybeth',
+    title: 'Über Lillybeth®',
     subtitle: 'Premium Aufenthalt am Plattensee',
-    content: `Willkommen bei Lillybeth Gästehäuser, wo die Buchung schnell, einfach und bequem ist. Schon beim ersten Klick werden Sie spüren: Hier sind Sie richtig!
+    content: `Willkommen bei Lillybeth® Gästehäuser, wo die Buchung schnell, einfach und bequem ist. Schon beim ersten Klick werden Sie spüren: Hier sind Sie richtig!
 
 Buchen Sie direkt bei uns und sichern Sie sich den garantiert besten Preis – ohne versteckte Kosten durch direkten Kontakt zum Gastgeber.
 
 Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits bei der Planung beginnt – sich Zeit nehmen, die Schönheit des Plattensees zu genießen, ruhige Momente zu erleben und Erinnerungen zu schaffen, die ein Leben lang halten.`,
+  },
+
+  // About Page
+  aboutPage: {
+    title: 'Über uns',
+    contactTitle: 'Kontakt',
+    mapTitle: 'So finden Sie uns',
+    mapSubtitle: 'Unsere Häuser am Plattensee',
+    buildingsTitle: 'Unsere Häuser',
+    noContent: 'Inhalt folgt bald...',
   },
 
   // Gallery Section
@@ -110,7 +122,7 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
       terms: 'Allgemeine Geschäftsbedingungen',
       cancellation: 'Stornierungsbedingungen',
     },
-    copyright: '© {year} Lillybeth. Alle Rechte vorbehalten.',
+    copyright: '© {year} Lillybeth®. Alle Rechte vorbehalten.',
   },
 
   // Common
@@ -122,6 +134,7 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     previous: 'Zurück',
     next: 'Weiter',
     backToHome: 'Zurück zur Startseite',
+    max: 'max',
   },
 
   // Lightbox
@@ -149,8 +162,8 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     perNight: '/ Nacht',
     viewDetails: 'Details ansehen',
     bookThisRoom: 'Zimmer buchen',
-    capacity: 'Bis zu {count} Gäste',
-    capacitySingular: '1 Gast',
+    capacity: 'max {count} Gäste',
+    capacitySingular: 'max 1 Gast',
     noRoomsAvailable: 'Derzeit sind keine Zimmer in dieser Unterkunft verfügbar.',
     backToAccommodations: 'Zurück zu Unterkünften',
   },
@@ -194,6 +207,13 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     referenceNumber: 'Referenznummer',
     clearCart: 'Alles löschen',
     selectDates: 'Datum auswählen',
+    guestBookingDetails: 'Gäste- & Buchungsdetails',
+    goodToKnow: 'Gut zu wissen',
+    nightSingular: 'Nacht',
+    nightsPlural: 'Nächte',
+    roomSingular: 'Zimmer',
+    roomsPlural: 'Zimmer',
+    selected: 'ausgewählt',
   },
 
   // Thank You Page

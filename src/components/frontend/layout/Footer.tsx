@@ -26,8 +26,8 @@ export function Footer() {
                 height={44}
                 className="rounded-lg transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="font-serif text-2xl font-semibold text-white">
-                Lillybeth
+              <span className="font-serif text-2xl text-white">
+                Lillybeth<sup>®</sup>
               </span>
             </Link>
             <p className="mt-4 text-sm text-stone-400 leading-relaxed">

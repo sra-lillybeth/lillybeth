@@ -4,6 +4,7 @@ export const en = {
     accommodation: 'accommodation',
     rooms: 'rooms',
     booking: 'booking',
+    about: 'about',
   },
 
   // Header
@@ -11,6 +12,7 @@ export const en = {
     nav: {
       home: 'Home',
       accommodations: 'Accommodations',
+      about: 'About us',
       rooms: 'Rooms',
       contact: 'Contact',
     },
@@ -19,7 +21,7 @@ export const en = {
 
   // Hero Section
   hero: {
-    headline: 'Lillybeth Guesthouses',
+    headline: 'Lillybeth® Guesthouses',
     subtitle: 'Where relaxation begins already in the planning stage',
     scrollDown: 'Scroll to explore',
   },
@@ -64,19 +66,29 @@ export const en = {
     viewAll: 'View All Properties',
     viewDetails: 'View Details',
     learnMore: 'Learn more',
-    capacity: 'Up to {count} guests',
-    capacitySingular: '1 guest',
+    capacity: 'max {count} guests',
+    capacitySingular: 'max 1 guest',
   },
 
-  // About Section
+  // About Section (homepage)
   about: {
-    title: 'About Lillybeth',
+    title: 'About Lillybeth®',
     subtitle: 'Premium stay at Lake Balaton',
-    content: `Welcome to Lillybeth Guesthouses, where booking your stay is fast, simple and convenient. From the first click, you'll feel you're in the right place.
+    content: `Welcome to Lillybeth® Guesthouses, where booking your stay is fast, simple and convenient. From the first click, you'll feel you're in the right place.
 
 Book directly with us and enjoy the guaranteed best price, with no hidden fees and direct contact with the accommodation provider.
 
 We believe in providing an exceptional guest experience that begins already in the planning stage – taking time to appreciate the beauty of Lake Balaton, savoring quiet moments, and creating memories that last a lifetime.`,
+  },
+
+  // About Page
+  aboutPage: {
+    title: 'About us',
+    contactTitle: 'Contact',
+    mapTitle: 'Find us',
+    mapSubtitle: 'Our properties at Lake Balaton',
+    buildingsTitle: 'Our Properties',
+    noContent: 'Content coming soon...',
   },
 
   // Gallery Section
@@ -110,7 +122,7 @@ We believe in providing an exceptional guest experience that begins already in t
       terms: 'Terms & Conditions',
       cancellation: 'Cancellation Policy',
     },
-    copyright: '© {year} Lillybeth. All rights reserved.',
+    copyright: '© {year} Lillybeth®. All rights reserved.',
   },
 
   // Common
@@ -122,6 +134,7 @@ We believe in providing an exceptional guest experience that begins already in t
     previous: 'Previous',
     next: 'Next',
     backToHome: 'Back to Home',
+    max: 'max',
   },
 
   // Lightbox
@@ -149,8 +162,8 @@ We believe in providing an exceptional guest experience that begins already in t
     perNight: '/ night',
     viewDetails: 'View Details',
     bookThisRoom: 'Book This Room',
-    capacity: 'Up to {count} guests',
-    capacitySingular: '1 guest',
+    capacity: 'max {count} guests',
+    capacitySingular: 'max 1 guest',
     noRoomsAvailable: 'No rooms available at this accommodation.',
     backToAccommodations: 'Back to Accommodations',
   },
@@ -194,6 +207,13 @@ We believe in providing an exceptional guest experience that begins already in t
     referenceNumber: 'Reference',
     clearCart: 'Clear all',
     selectDates: 'Select dates',
+    guestBookingDetails: 'Guest & booking details',
+    goodToKnow: 'Good to know',
+    nightSingular: 'night',
+    nightsPlural: 'nights',
+    roomSingular: 'room',
+    roomsPlural: 'rooms',
+    selected: 'selected',
   },
 
   // Thank You Page

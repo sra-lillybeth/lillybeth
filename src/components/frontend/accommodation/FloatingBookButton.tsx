@@ -11,13 +11,9 @@ export function FloatingBookButton({ accommodationId }: FloatingBookButtonProps)
   const { t } = useFrontendLanguage();
   const [isVisible, setIsVisible] = useState(false);
 
-  // Show button after scrolling past the hero
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const showThreshold = 400; // Show after scrolling 400px
-
-      setIsVisible(scrollY > showThreshold);
+      setIsVisible(window.scrollY > 400);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -25,15 +21,15 @@ export function FloatingBookButton({ accommodationId }: FloatingBookButtonProps)
   }, []);
 
   const handleClick = () => {
-    // Scroll to booking search section
     const bookingSection = document.getElementById('booking-search');
     if (bookingSection) {
       bookingSection.scrollIntoView({ behavior: 'smooth' });
     } else {
-      // Fallback: navigate to booking page
       window.location.href = `/frontend/booking?accommodation=${accommodationId}`;
     }
   };
+
+  const buttonLabel = t.booking.guestBookingDetails;
 
   return (
     <>
@@ -48,7 +44,7 @@ export function FloatingBookButton({ accommodationId }: FloatingBookButtonProps)
           hover:bg-stone-700 hover:shadow-xl hover:scale-105
           ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}
         `}
-        aria-label={t.header.bookNow}
+        aria-label={buttonLabel}
       >
         <svg
           className="w-5 h-5"
@@ -63,7 +59,7 @@ export function FloatingBookButton({ accommodationId }: FloatingBookButtonProps)
             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
           />
         </svg>
-        {t.header.bookNow}
+        {buttonLabel}
       </button>
 
       {/* Mobile Sticky Button */}
@@ -92,7 +88,7 @@ export function FloatingBookButton({ accommodationId }: FloatingBookButtonProps)
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          {t.header.bookNow}
+          {buttonLabel}
         </button>
       </div>
     </>

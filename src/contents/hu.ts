@@ -4,6 +4,7 @@ export const hu = {
     accommodation: 'szallas',
     rooms: 'szobak',
     booking: 'foglalas',
+    about: 'rolunk',
   },
 
   // Header
@@ -11,6 +12,7 @@ export const hu = {
     nav: {
       home: 'Főoldal',
       accommodations: 'Szállások',
+      about: 'Rólunk',
       rooms: 'Szobák',
       contact: 'Kapcsolat',
     },
@@ -19,7 +21,7 @@ export const hu = {
 
   // Hero Section
   hero: {
-    headline: 'Lillybeth Vendégházak',
+    headline: 'Lillybeth® Vendégházak',
     subtitle: 'Ahol a pihenés már a tervezésnél elkezdődik',
     scrollDown: 'Görgessen a felfedezéshez',
   },
@@ -64,19 +66,29 @@ export const hu = {
     viewAll: 'Összes épület',
     viewDetails: 'Részletek',
     learnMore: 'Tudjon meg többet',
-    capacity: 'Max. {count} fő',
-    capacitySingular: '1 fő',
+    capacity: 'max {count} fő',
+    capacitySingular: 'max 1 fő',
   },
 
-  // About Section
+  // About Section (homepage)
   about: {
-    title: 'A Lillybeth-ről',
+    title: 'A Lillybeth®-ről',
     subtitle: 'Prémium pihenés a Balatonnál',
-    content: `Üdvözöljük a Lillybeth Vendégházakban, ahol a foglalás gyors, egyszerű és kényelmes. Már az első kattintástól érezni fogja: jó helyen jár.
+    content: `Üdvözöljük a Lillybeth® Vendégházakban, ahol a foglalás gyors, egyszerű és kényelmes. Már az első kattintástól érezni fogja: jó helyen jár.
 
 Foglaljon közvetlenül nálunk, garantáltan a legjobb áron, rejtett költségek nélkül – közvetlen kapcsolatban a szállásadóval.
 
 Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdődik – időt szánunk a Balaton szépségének megbecsülésére, élvezzük a csendes pillanatokat, és egy életen át tartó emlékeket teremtünk.`,
+  },
+
+  // About Page
+  aboutPage: {
+    title: 'Rólunk',
+    contactTitle: 'Kapcsolat',
+    mapTitle: 'Találjon meg minket',
+    mapSubtitle: 'Épületeink a Balatonnál',
+    buildingsTitle: 'Épületeink',
+    noContent: 'Tartalom hamarosan...',
   },
 
   // Gallery Section
@@ -110,7 +122,7 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
       terms: 'Általános szerződési feltételek',
       cancellation: 'Lemondási feltételek',
     },
-    copyright: '© {year} Lillybeth. Minden jog fenntartva.',
+    copyright: '© {year} Lillybeth®. Minden jog fenntartva.',
   },
 
   // Common
@@ -122,6 +134,7 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     previous: 'Előző',
     next: 'Következő',
     backToHome: 'Vissza a főoldalra',
+    max: 'max',
   },
 
   // Lightbox
@@ -149,8 +162,8 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     perNight: '/ éjszaka',
     viewDetails: 'Részletek',
     bookThisRoom: 'Szoba foglalása',
-    capacity: 'Max. {count} fő',
-    capacitySingular: '1 fő',
+    capacity: 'max {count} fő',
+    capacitySingular: 'max 1 fő',
     noRoomsAvailable: 'Jelenleg nincs elérhető szoba ennél a szállásnál.',
     backToAccommodations: 'Vissza a szállásokhoz',
   },
@@ -194,6 +207,13 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     referenceNumber: 'Hivatkozási szám',
     clearCart: 'Összes törlése',
     selectDates: 'Dátum kiválasztása',
+    guestBookingDetails: 'Vendég- és foglalási adatok',
+    goodToKnow: 'Jó tudni',
+    nightSingular: 'éjszaka',
+    nightsPlural: 'éjszaka',
+    roomSingular: 'szoba',
+    roomsPlural: 'szoba',
+    selected: 'kiválasztva',
   },
 
   // Thank You Page

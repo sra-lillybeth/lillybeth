@@ -1,9 +1,10 @@
 'use client';
 
+import React from 'react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 interface SectionTitleProps {
-  title: string;
+  title: React.ReactNode;
   subtitle?: string;
   alignment?: 'left' | 'center';
   className?: string;

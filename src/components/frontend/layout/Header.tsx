@@ -34,13 +34,12 @@ export function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  // Navigation links - Rooms removed
   const navLinks = [
     { href: '/frontend', label: t.header.nav.home },
     { href: `/frontend/${t.routes.accommodation}`, label: t.header.nav.accommodations },
+    { href: '/frontend/about', label: t.header.nav.about },
   ];
 
-  // Navigate to booking page
   const handleBookNowClick = () => {
     setIsMobileMenuOpen(false);
   };
@@ -60,13 +59,13 @@ export function Header() {
             >
               <Image
                 src="/lillybeth-ico.webp"
-                alt="Lillybeth"
+                alt="Lillybeth®"
                 width={40}
                 height={40}
                 className="rounded-lg"
               />
-              <span className="font-serif text-2xl font-semibold tracking-wide text-white">
-                Lillybeth
+              <span className="font-serif text-2xl tracking-wide text-white">
+                Lillybeth<sup>®</sup>
               </span>
             </Link>
 
@@ -163,13 +162,13 @@ export function Header() {
               <div className="flex items-center gap-2">
                 <Image
                   src="/lillybeth-ico.webp"
-                  alt="Lillybeth"
+                  alt="Lillybeth®"
                   width={32}
                   height={32}
                   className="rounded-lg"
                 />
-                <span className="font-serif text-xl font-semibold text-stone-800">
-                  Lillybeth
+                <span className="font-serif text-xl text-stone-800">
+                  Lillybeth<sup>®</sup>
                 </span>
               </div>
               <button

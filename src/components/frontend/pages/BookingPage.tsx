@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useFrontendLanguage } from '@/contexts/FrontendLanguageContext';
 import { useBookingCart } from '@/contexts/BookingCartContext';
+import { replacePlaceholders } from '@/contents';
 
 interface AdditionalPriceOption {
   id: string;
@@ -58,6 +59,18 @@ interface FormData {
   notes: string;
 }
 
+interface HouseRuleItem {
+  id: string;
+  rule: Record<string, string> | string;
+}
+
+interface BuildingWithRules {
+  id: string;
+  name: Record<string, string> | string;
+  cancellationPolicy: Record<string, string> | string | null;
+  houseRules: HouseRuleItem[];
+}
+
 export function BookingPage() {
   const router = useRouter();
   const { t, language } = useFrontendLanguage();
@@ -70,9 +83,7 @@ export function BookingPage() {
     arrivalTime: '',
     notes: '',
   });
-  // Building-level price selections (global)
   const [selectedBuildingPriceIds, setSelectedBuildingPriceIds] = useState<string[]>([]);
-  // Per-room price selections: roomTypeId -> roomIndex -> priceId[]
   const [perRoomSelections, setPerRoomSelections] = useState<PerRoomPriceSelection>({});
   const [priceCalculation, setPriceCalculation] = useState<PriceCalculation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -81,12 +92,15 @@ export function BookingPage() {
   const [error, setError] = useState<string | null>(null);
   const [summaryExpanded, setSummaryExpanded] = useState(true);
   const [mandatoryPricesInitialized, setMandatoryPricesInitialized] = useState(false);
+  const [buildingRules, setBuildingRules] = useState<BuildingWithRules[]>([]);
+  const [activeRuleTab, setActiveRuleTab] = useState<string | null>(null);
 
-  // Use refs for API calls without causing re-renders
   const selectedBuildingPriceIdsRef = useRef<string[]>([]);
   selectedBuildingPriceIdsRef.current = selectedBuildingPriceIds;
   const perRoomSelectionsRef = useRef<PerRoomPriceSelection>({});
   perRoomSelectionsRef.current = perRoomSelections;
+  const hasInitiallyLoaded = useRef(false);
+  const redirectingToThankYou = useRef(false);
 
   const getLocalizedText = useCallback(
     (field: Record<string, string> | string | null | undefined): string => {
@@ -97,19 +111,47 @@ export function BookingPage() {
     [language]
   );
 
-  // Redirect if cart is empty or dates are missing
+  // Redirect if cart is empty or dates are missing (skip if redirecting to thank-you)
   useEffect(() => {
+    if (redirectingToThankYou.current) return;
     if (totalRooms === 0 || !dates.checkIn || !dates.checkOut) {
       router.push('/frontend');
     }
   }, [totalRooms, dates, router]);
+
+  // Fetch building rules for "Good to know" section
+  useEffect(() => {
+    if (items.length === 0) return;
+
+    const roomTypeIds = [...new Set(items.map((i) => i.roomTypeId))];
+
+    fetch('/api/frontend/buildings/rules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomTypeIds }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        const buildings: BuildingWithRules[] = data.buildings || [];
+        setBuildingRules(buildings);
+        if (buildings.length > 0) {
+          setActiveRuleTab(buildings[0].id);
+        }
+      })
+      .catch(() => {});
+  }, [items]);
 
   // Fetch available prices and calculate totals (only on cart/dates change)
   useEffect(() => {
     const calculatePrices = async () => {
       if (!dates.checkIn || !dates.checkOut || items.length === 0) return;
 
-      setLoading(true);
+      // Only show full-page loader on initial load; use overlay loader for subsequent recalcs
+      if (!hasInitiallyLoaded.current) {
+        setLoading(true);
+      } else {
+        setRecalculating(true);
+      }
       setError(null);
 
       try {
@@ -133,10 +175,9 @@ export function BookingPage() {
 
         if (response.ok) {
           setPriceCalculation(data);
+          hasInitiallyLoaded.current = true;
 
-          // Auto-select mandatory prices only on first load
           if (!mandatoryPricesInitialized) {
-            // Mandatory building-level prices
             const mandatoryBuildingIds = data.availableAdditionalPrices
               .filter((p: AdditionalPriceOption) => p.mandatory && p.origin === 'building')
               .map((p: AdditionalPriceOption) => p.id);
@@ -144,23 +185,18 @@ export function BookingPage() {
               setSelectedBuildingPriceIds(mandatoryBuildingIds);
             }
 
-            // Initialize per-room selections for all rooms
-            // This ensures proper state structure even without mandatory prices
             const newPerRoomSelections: PerRoomPriceSelection = {};
             for (const breakdown of data.roomBreakdowns) {
               const mandatoryRoomPrices = breakdown.roomTypeAdditionalPrices
                 ?.filter((p: AdditionalPriceOption) => p.mandatory)
                 .map((p: AdditionalPriceOption) => p.id) || [];
 
-              // Always initialize the room type structure
               newPerRoomSelections[breakdown.roomTypeId] = {};
               for (let i = 0; i < breakdown.quantity; i++) {
-                // Initialize with mandatory prices (or empty array if none)
                 newPerRoomSelections[breakdown.roomTypeId][i] = [...mandatoryRoomPrices];
               }
             }
             setPerRoomSelections(newPerRoomSelections);
-
             setMandatoryPricesInitialized(true);
           }
         } else {
@@ -171,15 +207,15 @@ export function BookingPage() {
         setError('Failed to calculate prices');
       } finally {
         setLoading(false);
+        setRecalculating(false);
       }
     };
 
     calculatePrices();
   }, [dates.checkIn, dates.checkOut, items, mandatoryPricesInitialized]);
 
-  // Recalculate when additional price selection changes (separate effect to avoid loop)
+  // Recalculate when additional price selection changes
   useEffect(() => {
-    // Skip if not initialized yet or no calculation exists
     if (!mandatoryPricesInitialized || !priceCalculation) return;
 
     const recalculatePrices = async () => {
@@ -223,7 +259,6 @@ export function BookingPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Toggle building-level additional price
   const toggleBuildingPrice = (priceId: string, mandatory: boolean) => {
     if (mandatory) return;
     setSelectedBuildingPriceIds((prev) =>
@@ -231,14 +266,10 @@ export function BookingPage() {
     );
   };
 
-  // Toggle per-room additional price
   const toggleRoomPrice = (roomTypeId: string, roomIndex: number, priceId: string, mandatory: boolean) => {
     if (mandatory) return;
     setPerRoomSelections((prev) => {
-      // Deep clone the entire structure to ensure React detects the change
       const updated: PerRoomPriceSelection = {};
-
-      // Copy all existing data
       for (const rtId of Object.keys(prev)) {
         updated[rtId] = {};
         for (const rIdxStr of Object.keys(prev[rtId])) {
@@ -247,23 +278,13 @@ export function BookingPage() {
         }
       }
 
-      // Ensure the target room type exists
-      if (!updated[roomTypeId]) {
-        updated[roomTypeId] = {};
-      }
+      if (!updated[roomTypeId]) updated[roomTypeId] = {};
+      if (!updated[roomTypeId][roomIndex]) updated[roomTypeId][roomIndex] = [];
 
-      // Ensure the target room index exists
-      if (!updated[roomTypeId][roomIndex]) {
-        updated[roomTypeId][roomIndex] = [];
-      }
-
-      // Toggle the price
       const currentPrices = updated[roomTypeId][roomIndex];
       if (currentPrices.includes(priceId)) {
-        // Remove the price (deselect)
         updated[roomTypeId][roomIndex] = currentPrices.filter((id) => id !== priceId);
       } else {
-        // Add the price (select)
         updated[roomTypeId][roomIndex] = [...currentPrices, priceId];
       }
 
@@ -271,7 +292,6 @@ export function BookingPage() {
     });
   };
 
-  // Check if a room price is selected
   const isRoomPriceSelected = (roomTypeId: string, roomIndex: number, priceId: string): boolean => {
     return perRoomSelections[roomTypeId]?.[roomIndex]?.includes(priceId) || false;
   };
@@ -310,7 +330,6 @@ export function BookingPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Redirect to thank you page with booking details
         const bookingId = data.bookingId || data.bookingGroupId;
         const params = new URLSearchParams({
           id: bookingId,
@@ -323,6 +342,7 @@ export function BookingPage() {
           rooms: totalRooms.toString(),
         });
 
+        redirectingToThankYou.current = true;
         clearCart();
         router.push(`/frontend/thank-you?${params}`);
       } else {
@@ -344,7 +364,6 @@ export function BookingPage() {
     );
   };
 
-  // Loading or empty state
   if (loading || !priceCalculation) {
     return (
       <div className="min-h-screen bg-stone-50 pt-24">
@@ -357,11 +376,16 @@ export function BookingPage() {
     );
   }
 
-  const totalCapacity = items.reduce((sum, item) => sum + item.capacity * item.quantity, 0);
   const totalGuests = items.reduce((sum, item) => {
     const guestCounts = item.guestCounts || Array(item.quantity).fill(item.capacity);
     return sum + guestCounts.reduce((s, g) => s + g, 0);
   }, 0);
+
+  // Determine if "Good to know" has any content
+  const goodToKnowBuildings = buildingRules.filter(
+    (b) => b.cancellationPolicy || b.houseRules.length > 0
+  );
+  const hasGoodToKnow = goodToKnowBuildings.length > 0;
 
   return (
     <div className="min-h-screen bg-stone-50 pt-24 pb-16">
@@ -388,7 +412,7 @@ export function BookingPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Left Column: Form */}
+          {/* Left Column: Form + Good to Know */}
           <div className="lg:col-span-3">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Guest Information */}
@@ -476,6 +500,76 @@ export function BookingPage() {
                 </div>
               </div>
 
+              {/* Good to Know Section */}
+              {hasGoodToKnow && (
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                  <h2 className="text-lg font-semibold text-stone-800 mb-6 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {t.booking?.goodToKnow || 'Good to know'}
+                  </h2>
+
+                  {/* Tabs if multiple buildings */}
+                  {goodToKnowBuildings.length > 1 && (
+                    <div className="flex gap-1 mb-6 border-b border-stone-100 overflow-x-auto">
+                      {goodToKnowBuildings.map((building) => (
+                        <button
+                          key={building.id}
+                          type="button"
+                          onClick={() => setActiveRuleTab(building.id)}
+                          className={`pb-3 px-3 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap ${
+                            activeRuleTab === building.id
+                              ? 'border-stone-800 text-stone-800'
+                              : 'border-transparent text-stone-400 hover:text-stone-600'
+                          }`}
+                        >
+                          {getLocalizedText(building.name)}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  {goodToKnowBuildings
+                    .filter((b) => goodToKnowBuildings.length === 1 || b.id === activeRuleTab)
+                    .map((building) => (
+                      <div key={building.id} className="space-y-6">
+                        {/* Booking Conditions */}
+                        {building.cancellationPolicy && (
+                          <div>
+                            <h3 className="text-sm font-semibold text-stone-700 mb-3 uppercase tracking-wide">
+                              {t.accommodation?.bookingConditions || 'Booking Conditions'}
+                            </h3>
+                            <p className="text-sm text-stone-600 leading-relaxed">
+                              {getLocalizedText(building.cancellationPolicy)}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* House Rules */}
+                        {building.houseRules.length > 0 && (
+                          <div>
+                            <h3 className="text-sm font-semibold text-stone-700 mb-3 uppercase tracking-wide">
+                              {t.accommodation?.houseRules || 'House Rules'}
+                            </h3>
+                            <ul className="space-y-2">
+                              {building.houseRules.map((rule) => (
+                                <li key={rule.id} className="flex items-start gap-2 text-sm text-stone-600">
+                                  <svg className="w-4 h-4 text-stone-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                  <span>{getLocalizedText(rule.rule)}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              )}
+
               {/* Submit Button - Mobile */}
               <div className="lg:hidden">
                 <button
@@ -537,7 +631,7 @@ export function BookingPage() {
                       <div className="text-center">
                         <div className="w-8 h-px bg-stone-300" />
                         <p className="text-xs text-stone-400 mt-1">
-                          {priceCalculation.nights} {priceCalculation.nights === 1 ? 'night' : 'nights'}
+                          {priceCalculation.nights} {priceCalculation.nights === 1 ? t.booking.nightSingular : t.booking.nightsPlural}
                         </p>
                       </div>
                       <div className="text-right">
@@ -548,7 +642,6 @@ export function BookingPage() {
 
                     {/* Per-Room Breakdowns with Additional Prices */}
                     <div className="space-y-4 mb-4 relative">
-                      {/* Recalculating overlay */}
                       {recalculating && (
                         <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center rounded-xl">
                           <div className="w-5 h-5 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
@@ -584,139 +677,138 @@ export function BookingPage() {
 
                             {/* Individual Rooms */}
                             {Array.from({ length: breakdown.quantity }, (_, roomIndex) => {
-                              // Get the cart item for this room type
                               const cartItem = items.find((i) => i.roomTypeId === breakdown.roomTypeId);
                               const currentGuestCount = cartItem?.guestCounts?.[roomIndex] ?? cartItem?.capacity ?? 1;
                               const maxGuests = cartItem?.capacity ?? 1;
 
                               return (
-                              <div key={roomIndex} className="p-3 border-b border-stone-100 last:border-b-0">
-                                <div className="flex items-center justify-between mb-2">
-                                  {hasMultipleRooms ? (
-                                    <span className="text-sm font-medium text-stone-700">
-                                      {t.booking?.room || 'Room'} {roomIndex + 1}
+                                <div key={roomIndex} className="p-3 border-b border-stone-100 last:border-b-0">
+                                  <div className="flex items-center justify-between mb-2">
+                                    {hasMultipleRooms ? (
+                                      <span className="text-sm font-medium text-stone-700">
+                                        {t.booking?.room || 'Room'} {roomIndex + 1}
+                                      </span>
+                                    ) : (
+                                      <span className="text-sm font-medium text-stone-700">
+                                        {t.booking?.accommodationTotal || 'Accommodation'}
+                                      </span>
+                                    )}
+                                    <span className="text-sm text-stone-600">
+                                      €{breakdown.pricePerRoom || 0}
                                     </span>
-                                  ) : (
-                                    <span className="text-sm font-medium text-stone-700">
-                                      {t.booking?.accommodationTotal || 'Accommodation'}
-                                    </span>
-                                  )}
-                                  <span className="text-sm text-stone-600">
-                                    €{breakdown.pricePerRoom || 0}
-                                  </span>
-                                </div>
-
-                                {/* Guest Count Stepper */}
-                                <div className="flex items-center justify-between mb-2 p-2 bg-white rounded-lg border border-stone-200">
-                                  <div className="flex items-center gap-2 text-sm text-stone-600">
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                    <span>{t.search?.guests || 'Guests'}</span>
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      type="button"
-                                      onClick={() => updateGuestCount(breakdown.roomTypeId, roomIndex, currentGuestCount - 1)}
-                                      disabled={currentGuestCount <= 1 || recalculating}
-                                      className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                                        currentGuestCount <= 1 || recalculating
-                                          ? 'bg-stone-100 text-stone-300 cursor-not-allowed'
-                                          : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-                                      }`}
-                                      aria-label="Decrease guests"
+
+                                  {/* Guest Count Stepper */}
+                                  <div className="flex items-center justify-between mb-2 p-2 bg-white rounded-lg border border-stone-200">
+                                    <div className="flex items-center gap-2 text-sm text-stone-600">
+                                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                      </svg>
+                                      <span>{t.search?.guests || 'Guests'}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => updateGuestCount(breakdown.roomTypeId, roomIndex, currentGuestCount - 1)}
+                                        disabled={currentGuestCount <= 1 || recalculating}
+                                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                                          currentGuestCount <= 1 || recalculating
+                                            ? 'bg-stone-100 text-stone-300 cursor-not-allowed'
+                                            : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                                        }`}
+                                        aria-label="Decrease guests"
+                                      >
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                                        </svg>
+                                      </button>
+                                      <span className="w-6 text-center text-sm font-medium text-stone-700">
+                                        {currentGuestCount}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => updateGuestCount(breakdown.roomTypeId, roomIndex, currentGuestCount + 1)}
+                                        disabled={currentGuestCount >= maxGuests || recalculating}
+                                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
+                                          currentGuestCount >= maxGuests || recalculating
+                                            ? 'bg-stone-100 text-stone-300 cursor-not-allowed'
+                                            : 'bg-stone-800 text-white hover:bg-stone-700'
+                                        }`}
+                                        aria-label="Increase guests"
+                                      >
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Mandatory room prices */}
+                                  {mandatoryPrices.map((price) => (
+                                    <div
+                                      key={price.id}
+                                      className="flex items-center justify-between py-1 text-xs text-stone-500"
                                     >
-                                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                                      </svg>
-                                    </button>
-                                    <span className="w-6 text-center text-sm font-medium text-stone-700">
-                                      {currentGuestCount}
-                                    </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => updateGuestCount(breakdown.roomTypeId, roomIndex, currentGuestCount + 1)}
-                                      disabled={currentGuestCount >= maxGuests || recalculating}
-                                      className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-                                        currentGuestCount >= maxGuests || recalculating
-                                          ? 'bg-stone-100 text-stone-300 cursor-not-allowed'
-                                          : 'bg-stone-800 text-white hover:bg-stone-700'
-                                      }`}
-                                      aria-label="Increase guests"
-                                    >
-                                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                </div>
+                                      <span className="flex items-center gap-1">
+                                        <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        {getLocalizedText(price.title)}
+                                        <span className="text-stone-400">({t.booking?.mandatory || 'Required'})</span>
+                                      </span>
+                                      <span>
+                                        €{price.priceEur}
+                                        {price.perNight && `/${t.booking?.perNight || 'night'}`}
+                                      </span>
+                                    </div>
+                                  ))}
 
-                                {/* Mandatory room prices */}
-                                {mandatoryPrices.map((price) => (
-                                  <div
-                                    key={price.id}
-                                    className="flex items-center justify-between py-1 text-xs text-stone-500"
-                                  >
-                                    <span className="flex items-center gap-1">
-                                      <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                      </svg>
-                                      {getLocalizedText(price.title)}
-                                      <span className="text-stone-400">({t.booking?.mandatory || 'Required'})</span>
-                                    </span>
-                                    <span>
-                                      €{price.priceEur}
-                                      {price.perNight && `/${t.booking?.perNight || 'night'}`}
-                                    </span>
-                                  </div>
-                                ))}
-
-                                {/* Optional room prices */}
-                                {optionalPrices.length > 0 && (
-                                  <div className="mt-2 space-y-1">
-                                    {optionalPrices.map((price) => {
-                                      const isSelected = isRoomPriceSelected(breakdown.roomTypeId, roomIndex, price.id);
-                                      return (
-                                        <button
-                                          type="button"
-                                          key={price.id}
-                                          onClick={() => toggleRoomPrice(breakdown.roomTypeId, roomIndex, price.id, false)}
-                                          disabled={recalculating}
-                                          className={`w-full flex items-center justify-between p-2 rounded-lg border transition-colors ${
-                                            recalculating
-                                              ? 'opacity-50 cursor-not-allowed'
-                                              : 'cursor-pointer'
-                                          } ${
-                                            isSelected
-                                              ? 'bg-amber-50 border-amber-300'
-                                              : 'bg-white border-stone-200 hover:border-stone-300'
-                                          }`}
-                                        >
-                                          <div className="flex items-center gap-2">
-                                            <div
-                                              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                                                isSelected ? 'bg-amber-400 border-amber-400' : 'border-stone-300'
-                                              }`}
-                                            >
-                                              {isSelected && (
-                                                <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                </svg>
-                                              )}
+                                  {/* Optional room prices */}
+                                  {optionalPrices.length > 0 && (
+                                    <div className="mt-2 space-y-1">
+                                      {optionalPrices.map((price) => {
+                                        const isSelected = isRoomPriceSelected(breakdown.roomTypeId, roomIndex, price.id);
+                                        return (
+                                          <button
+                                            type="button"
+                                            key={price.id}
+                                            onClick={() => toggleRoomPrice(breakdown.roomTypeId, roomIndex, price.id, false)}
+                                            disabled={recalculating}
+                                            className={`w-full flex items-center justify-between p-2 rounded-lg border transition-colors ${
+                                              recalculating
+                                                ? 'opacity-50 cursor-not-allowed'
+                                                : 'cursor-pointer'
+                                            } ${
+                                              isSelected
+                                                ? 'bg-amber-50 border-amber-300'
+                                                : 'bg-white border-stone-200 hover:border-stone-300'
+                                            }`}
+                                          >
+                                            <div className="flex items-center gap-2">
+                                              <div
+                                                className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                                                  isSelected ? 'bg-amber-400 border-amber-400' : 'border-stone-300'
+                                                }`}
+                                              >
+                                                {isSelected && (
+                                                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                  </svg>
+                                                )}
+                                              </div>
+                                              <span className="text-xs text-stone-700">{getLocalizedText(price.title)}</span>
                                             </div>
-                                            <span className="text-xs text-stone-700">{getLocalizedText(price.title)}</span>
-                                          </div>
-                                          <span className="text-xs text-stone-600">
-                                            +€{price.priceEur}
-                                            {price.perNight && `/${t.booking?.perNight || 'night'}`}
-                                          </span>
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                              </div>
-                            );
+                                            <span className="text-xs text-stone-600">
+                                              +€{price.priceEur}
+                                              {price.perNight && `/${t.booking?.perNight || 'night'}`}
+                                            </span>
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
                             })}
                           </div>
                         );
@@ -727,14 +819,16 @@ export function BookingPage() {
                     <div className="flex items-center justify-between text-sm pb-4 mb-4 border-b border-stone-100">
                       <span className="text-stone-500">{t.search.guests}</span>
                       <span className="font-medium text-stone-700">
-                        {totalGuests} {totalGuests === 1 ? t.search.guestSingular : t.search.guestPlural}
+                        {replacePlaceholders(
+                          totalGuests === 1 ? t.buildings.capacitySingular : t.buildings.capacity,
+                          { count: totalGuests }
+                        )}
                       </span>
                     </div>
 
                     {/* Building-level Additional Prices */}
                     {priceCalculation.availableAdditionalPrices.filter((p) => p.origin === 'building').length > 0 && (
                       <div className="mb-4 relative">
-                        {/* Recalculating overlay */}
                         {recalculating && (
                           <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center rounded-xl">
                             <div className="w-5 h-5 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />

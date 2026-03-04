@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-family-serif: var(--font-birthstone), cursive;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
