@@ -1,0 +1,353 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Building {
+  id                 String                    @id @default(cuid())
+  name               String
+  slug               String?                   @unique
+  address            String?
+  latitude           Float?
+  longitude          Float?
+  description        Json?
+  cancellationPolicy Json?
+  paymentMethods     Json?
+  depositInfo        Json?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
+  additionalPrices   BuildingAdditionalPrice[]
+  amenityCategories  BuildingAmenityCategory[]
+  images             BuildingImage[]
+  houseRules         HouseRule[]
+  roomTypes          RoomType[]
+
+  @@map("buildings")
+}
+
+model BuildingImage {
+  id         String   @id @default(cuid())
+  url        String
+  filename   String   @default("")
+  order      Int      @default(0)
+  buildingId String
+  createdAt  DateTime @default(now())
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+
+  @@map("building_images")
+}
+
+model HouseRule {
+  id         String   @id @default(cuid())
+  key        Json
+  value      Json
+  order      Int      @default(0)
+  buildingId String
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+
+  @@map("house_rules")
+}
+
+model BuildingAmenityCategory {
+  id         String            @id @default(cuid())
+  name       Json
+  order      Int               @default(0)
+  buildingId String
+  amenities  BuildingAmenity[]
+  building   Building          @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+
+  @@map("building_amenity_categories")
+}
+
+model BuildingAmenity {
+  id         String                  @id @default(cuid())
+  name       Json
+  order      Int                     @default(0)
+  categoryId String
+  category   BuildingAmenityCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("building_amenities")
+}
+
+model BuildingAdditionalPrice {
+  id         String   @id @default(cuid())
+  title      Json
+  priceEur   Float
+  mandatory  Boolean  @default(false)
+  perNight   Boolean  @default(false)
+  perGuest   Boolean  @default(false)
+  order      Int      @default(0)
+  buildingId String
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+
+  @@map("building_additional_prices")
+}
+
+model RoomType {
+  id                String                    @id @default(cuid())
+  name              Json
+  description       Json?
+  capacity          Int
+  buildingId        String
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  calendarOverrides CalendarOverride[]
+  dateRangePrices   DateRangePrice[]
+  additionalPrices  RoomTypeAdditionalPrice[]
+  amenityCategories RoomTypeAmenityCategory[]
+  images            RoomTypeImage[]
+  building          Building                  @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  rooms             Room[]
+
+  @@map("room_types")
+}
+
+model RoomTypeImage {
+  id         String   @id @default(cuid())
+  url        String
+  filename   String   @default("")
+  order      Int      @default(0)
+  roomTypeId String
+  createdAt  DateTime @default(now())
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@map("room_type_images")
+}
+
+model RoomTypeAmenityCategory {
+  id         String            @id @default(cuid())
+  name       Json
+  order      Int               @default(0)
+  roomTypeId String
+  amenities  RoomTypeAmenity[]
+  roomType   RoomType          @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@map("room_type_amenity_categories")
+}
+
+model RoomTypeAmenity {
+  id         String                  @id @default(cuid())
+  name       Json
+  order      Int                     @default(0)
+  categoryId String
+  category   RoomTypeAmenityCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("room_type_amenities")
+}
+
+model RoomTypeAdditionalPrice {
+  id         String   @id @default(cuid())
+  title      Json
+  priceEur   Float
+  mandatory  Boolean  @default(false)
+  perNight   Boolean  @default(false)
+  perGuest   Boolean  @default(false)
+  order      Int      @default(0)
+  roomTypeId String
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@map("room_type_additional_prices")
+}
+
+model Room {
+  id         String    @id @default(cuid())
+  name       String
+  isActive   Boolean   @default(true)
+  roomTypeId String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  bookings   Booking[]
+  roomType   RoomType  @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@map("rooms")
+}
+
+model DateRangePrice {
+  id           String   @id @default(cuid())
+  startDate    DateTime @db.Date
+  endDate      DateTime @db.Date
+  weekdayPrice Float
+  weekendPrice Float
+  minNights    Int      @default(1)
+  roomTypeId   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  isInactive   Boolean  @default(false)
+  roomType     RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@map("date_range_prices")
+}
+
+model CalendarOverride {
+  id         String   @id @default(cuid())
+  date       DateTime @db.Date
+  price      Float?
+  minNights  Int?
+  isInactive Boolean  @default(false)
+  roomTypeId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  roomType   RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([roomTypeId, date])
+  @@map("calendar_overrides")
+}
+
+// BookingGroup: Container for multi-room bookings
+// Holds shared guest information and aggregated totals
+model BookingGroup {
+  id                     String        @id @default(cuid())
+  // Guest information (single source of truth for grouped bookings)
+  guestName              String
+  guestEmail             String?
+  guestPhone             String?
+  // Shared booking metadata
+  source                 BookingSource @default(MANUAL)
+  checkIn                DateTime      @db.Date
+  checkOut               DateTime      @db.Date
+  arrivalTime            String?
+  notes                  String?
+  // Aggregated status
+  status                 BookingStatus @default(INCOMING)
+  paymentStatus          PaymentStatus @default(PENDING)
+  // Aggregated pricing
+  calculatedTotalAmount  Float?        // Always auto-computed sum of room totals (for reference)
+  totalAmount            Float?        // Final agreed price (may differ from calculated if custom)
+  hasCustomFinalAmount   Boolean       @default(false) // True if totalAmount is a custom agreement
+  hasCustomHufPrice      Boolean       @default(false)
+  customHufPrice         Float?
+  // Status tracking (applies to whole group)
+  invoiceSent       Boolean       @default(false)
+  vendegem          Boolean       @default(false)
+  cleaned           Boolean       @default(false)
+  // Timestamps
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  // Relations
+  bookings          Booking[]     // The individual room bookings
+  payments          Payment[]     // Group-level payments
+
+  @@map("booking_groups")
+}
+
+model Booking {
+  id               String                   @id @default(cuid())
+  source           BookingSource            @default(MANUAL)
+  guestName        String
+  guestEmail       String?
+  guestPhone       String?
+  guestCount       Int
+  checkIn          DateTime                 @db.Date
+  checkOut         DateTime                 @db.Date
+  arrivalTime      String?
+  status           BookingStatus            @default(INCOMING)
+  paymentStatus    PaymentStatus            @default(PENDING)
+  notes            String?
+  totalAmount      Float?
+  // Custom HUF price for special agreements (does not override EUR price)
+  hasCustomHufPrice Boolean                 @default(false)
+  customHufPrice    Float?
+  roomId           String
+  // Optional: Group membership (null = standalone booking)
+  groupId          String?
+  // Status tracking checkboxes
+  invoiceSent      Boolean                  @default(false)
+  vendegem         Boolean                  @default(false)
+  cleaned          Boolean                  @default(false)
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  additionalPrices BookingAdditionalPrice[]
+  payments         Payment[]
+  room             Room                     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  group            BookingGroup?            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+model Payment {
+  id        String          @id @default(cuid())
+  amount    Float
+  currency  PaymentCurrency @default(EUR)
+  method    PaymentMethod
+  date      DateTime        @db.Date
+  note      String?
+  // Payment can be linked to a standalone booking OR a booking group
+  bookingId String?
+  groupId   String?
+  createdAt DateTime        @default(now())
+  booking   Booking?        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  group     BookingGroup?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum PaymentCurrency {
+  EUR
+  HUF
+}
+
+enum PaymentMethod {
+  CASH
+  TRANSFER
+  CREDIT_CARD
+}
+
+model BookingAdditionalPrice {
+  id        String  @id @default(cuid())
+  title     String
+  priceEur  Float
+  quantity  Int     @default(1)
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("booking_additional_prices")
+}
+
+enum BookingSource {
+  MANUAL
+  WEBSITE
+  BOOKING_COM
+  SZALLAS_HU
+  AIRBNB
+}
+
+enum BookingStatus {
+  INCOMING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PARTIALLY_PAID
+  FULLY_PAID
+  REFUNDED
+}
+
+model SpecialDay {
+  id        String   @id @default(cuid())
+  name      String
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("special_days")
+}

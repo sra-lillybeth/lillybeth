@@ -1,21 +1,28 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Inter } from 'next/font/google'
+import { Birthstone, Inter } from 'next/font/google'
 import './globals.css'
 
-const playfair = Playfair_Display({
+const birthstone = Birthstone({
+  weight: '400',
   subsets: ['latin'],
-  variable: '--font-playfair'
+  variable: '--font-birthstone',
+  display: 'swap',
 })
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter'
+  variable: '--font-inter',
 })
 
+
 export const metadata: Metadata = {
-  title: 'Lillybeth Guesthouses | Villa Lillybeth & Garden Rooms & Lakeside',
+  title: {
+    default: 'Lillybeth® Guesthouses | Lake Balaton',
+    template: '%s | Lillybeth®',
+  },
   description:
-    'Premium guesthouse accommodation at Lake Balaton. Book directly for the best prices. Villa Lillybeth, Lillybeth Garden Rooms & Lillybeth Lakeside.'
+    'Book your stay at Lillybeth® Guesthouses on Lake Balaton. Cozy rooms, stunning views, and authentic Hungarian hospitality. Best price guaranteed.',
+  metadataBase: new URL('https://lillybeth.hu'),
 }
 
 export default function RootLayout({
@@ -25,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${inter.variable} font-sans`}>{children}</body>
+      <body className={`${birthstone.variable} ${inter.variable} font-sans`}>{children}</body>
     </html>
   )
 }
