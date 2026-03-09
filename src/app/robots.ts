@@ -7,9 +7,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/admin/', '/frontend/thank-you', '/api/'],
+        disallow: [
+          '/admin/',
+          '/api/',
+          '/frontend/thank-you',
+          '/frontend/booking',
+          '/frontend/search',
+          '/*?*',
+        ],
       },
     ],
     sitemap: `${siteConfig.siteUrl}/sitemap.xml`,
+    host: siteConfig.siteUrl,
   };
 }
