@@ -105,6 +105,7 @@ export async function GET(request: NextRequest) {
             id: true,
             guestName: true,
             totalAmount: true,
+            hasCustomFinalAmount: true,
             hasCustomHufPrice: true,
             customHufPrice: true,
             _count: {

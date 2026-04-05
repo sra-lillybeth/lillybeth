@@ -4,7 +4,7 @@ export const de = {
     accommodation: 'unterkunft',
     rooms: 'zimmer',
     booking: 'buchung',
-    about: 'uber-uns',
+    about: 'uber-uns'
   },
 
   // Header
@@ -14,16 +14,16 @@ export const de = {
       accommodations: 'Unterkünfte',
       about: 'Über uns',
       rooms: 'Zimmer',
-      contact: 'Kontakt',
+      contact: 'Kontakt'
     },
-    bookNow: 'Jetzt buchen',
+    bookNow: 'Jetzt buchen'
   },
 
   // Hero Section
   hero: {
     headline: 'Lillybeth® Gästehäuser',
     subtitle: 'Premium Aufenthalt am Plattensee',
-    scrollDown: 'Scrollen zum Entdecken',
+    scrollDown: 'Scrollen zum Entdecken'
   },
 
   // Search Section
@@ -48,7 +48,8 @@ export const de = {
     selectBestMatch: 'Beste Wahl auswählen',
     modifySearch: 'Suche ändern',
     noResults: 'Keine Zimmer verfügbar',
-    noResultsDescription: 'Wir konnten keine Zimmerkombination für {count} Gäste im ausgewählten Zeitraum finden.',
+    noResultsDescription:
+      'Wir konnten keine Zimmerkombination für {count} Gäste im ausgewählten Zeitraum finden.',
     tryDifferentDates: 'Andere Daten versuchen',
     adjustGuestCount: 'Gästeanzahl anpassen',
     filterByAccommodation: 'Nach Unterkunft filtern',
@@ -56,18 +57,21 @@ export const de = {
     selectAccommodation: 'Wählen Sie mindestens eine Unterkunft aus, um Ergebnisse zu sehen',
     showAll: 'Alle anzeigen',
     startSearchTitle: 'Finden Sie Ihren perfekten Aufenthalt',
-    startSearchDescription: 'Wählen Sie oben Ihre Daten und die Anzahl der Gäste aus, um verfügbare Unterkünfte zu sehen.',
+    startSearchDescription:
+      'Wählen Sie oben Ihre Daten und die Anzahl der Gäste aus, um verfügbare Unterkünfte zu sehen.'
   },
 
   // Buildings Section
   buildings: {
-    title: 'Unsere Häuser',
-    subtitle: 'Jedes Haus bietet ein einzigartiges Erlebnis am Plattensee',
+    title: 'Unsere Unterkünfte',
+    subtitle:
+      'Zwei Häuser mit Kapazität für 25 und 22 Personen. ' +
+      'Stilvolle Einrichtung & moderne Ausstattung & Premium Komfort',
     viewAll: 'Alle Häuser ansehen',
     viewDetails: 'Details ansehen',
     learnMore: 'Mehr erfahren',
     capacity: 'max {count} Gäste',
-    capacitySingular: 'max 1 Gast',
+    capacitySingular: 'max 1 Gast'
   },
 
   // About Section (homepage)
@@ -78,7 +82,7 @@ export const de = {
 
 Buchen Sie direkt bei uns und sichern Sie sich den garantiert besten Preis – ohne versteckte Kosten durch direkten Kontakt zum Gastgeber.
 
-Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits bei der Planung beginnt – sich Zeit nehmen, die Schönheit des Plattensees zu genießen, ruhige Momente zu erleben und Erinnerungen zu schaffen, die ein Leben lang halten.`,
+Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits bei der Planung beginnt – sich Zeit nehmen, die Schönheit des Plattensees zu genießen, ruhige Momente zu erleben und Erinnerungen zu schaffen, die ein Leben lang halten.`
   },
 
   // About Page
@@ -88,21 +92,21 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     mapTitle: 'So finden Sie uns',
     mapSubtitle: 'Unsere Häuser am Plattensee',
     buildingsTitle: 'Unsere Häuser',
-    noContent: 'Inhalt folgt bald...',
+    noContent: 'Inhalt folgt bald...'
   },
 
   // Gallery Section
   gallery: {
     title: 'Galerie',
     subtitle: 'Einblicke in Ihren zukünftigen Rückzugsort',
-    viewAll: 'Alle Fotos ansehen',
+    viewAll: 'Alle Fotos ansehen'
   },
 
   // Map Section
   map: {
     title: 'So finden Sie uns',
-    subtitle: 'Unsere Standorte erwarten Ihren Besuch',
-    getDirections: 'Route planen',
+    subtitle: 'Wir freuen uns auf Sie!',
+    getDirections: 'Route planen'
   },
 
   // Footer
@@ -111,18 +115,18 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     contact: {
       title: 'Kontakt',
       email: 'E-Mail',
-      phone: 'Telefon',
+      phone: 'Telefon'
     },
     address: {
-      title: 'Adresse',
+      title: 'Adresse'
     },
     quickLinks: {
       title: 'Schnelllinks',
       privacy: 'Datenschutzrichtlinie',
       terms: 'Allgemeine Geschäftsbedingungen',
-      cancellation: 'Stornierungsbedingungen',
+      cancellation: 'Stornierung'
     },
-    copyright: '© {year} Lillybeth®. Alle Rechte vorbehalten.',
+    copyright: '© {year} Lillybeth®. Alle Rechte vorbehalten.'
   },
 
   // Common
@@ -134,7 +138,7 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     previous: 'Zurück',
     next: 'Weiter',
     backToHome: 'Zurück zur Startseite',
-    max: 'max',
+    max: 'max'
   },
 
   // Lightbox
@@ -142,17 +146,19 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     close: 'Galerie schließen',
     previous: 'Vorheriges Bild',
     next: 'Nächstes Bild',
-    imageOf: 'von',
+    imageOf: 'von'
   },
 
   // Accommodation Detail Page
   accommodation: {
-    title: 'Unterkunft',
-    titlePlural: 'Unterkünfte',
+    title: 'Unsere Unterkünfte',
+    titlePlural: 'Unsere Unterkünfte',
     description: 'Beschreibung',
     amenities: 'Ausstattung',
-    houseRules: 'Hausregeln',
-    bookingConditions: 'Buchungsbedingungen',
+    houseRules: 'Nützliche Informationen',
+    bookingConditions: 'Buchungsinformationen',
+    paymentMethods: 'Zahlung',
+    deposit: 'Anzahlung',
     location: 'Standort',
     roomTypes: 'Verfügbare Zimmer',
     checkAvailability: 'Verfügbarkeit prüfen',
@@ -165,7 +171,7 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     capacity: 'max {count} Gäste',
     capacitySingular: 'max 1 Gast',
     noRoomsAvailable: 'Derzeit sind keine Zimmer in dieser Unterkunft verfügbar.',
-    backToAccommodations: 'Zurück zu Unterkünften',
+    backToAccommodations: 'Zurück zu Unterkünften'
   },
 
   // Room Types
@@ -175,7 +181,7 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     capacity: 'Kapazität',
     amenities: 'Ausstattung',
     viewRoom: 'Zimmer ansehen',
-    bookRoom: 'Zimmer buchen',
+    bookRoom: 'Zimmer buchen'
   },
 
   // Booking Page
@@ -203,7 +209,8 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     processing: 'Verarbeitung...',
     secureBooking: 'Ihre Buchung ist sicher und wird sofort bestätigt',
     confirmationTitle: 'Buchung bestätigt!',
-    confirmationMessage: 'Vielen Dank für Ihre Buchung. Wir haben eine Bestätigungs-E-Mail an Ihre Adresse gesendet.',
+    confirmationMessage:
+      'Vielen Dank für Ihre Buchung. Wir haben eine Bestätigungs-E-Mail an Ihre Adresse gesendet.',
     referenceNumber: 'Referenznummer',
     clearCart: 'Alles löschen',
     selectDates: 'Datum auswählen',
@@ -213,7 +220,7 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     nightsPlural: 'Nächte',
     roomSingular: 'Zimmer',
     roomsPlural: 'Zimmer',
-    selected: 'ausgewählt',
+    selected: 'ausgewählt'
   },
 
   // Thank You Page
@@ -225,7 +232,8 @@ Wir glauben daran, ein außergewöhnliches Gästeerlebnis zu bieten, das bereits
     questions: 'Haben Sie Fragen?',
     contactSupport: 'Kontaktieren Sie unser Support-Team',
     noBookingFound: 'Keine Buchung gefunden',
-    noBookingDescription: 'Wir konnten keine Buchungsdaten finden. Bitte starten Sie eine neue Suche.',
-    whatsApp: 'WhatsApp',
-  },
-};
+    noBookingDescription:
+      'Wir konnten keine Buchungsdaten finden. Bitte starten Sie eine neue Suche.',
+    whatsApp: 'WhatsApp'
+  }
+}

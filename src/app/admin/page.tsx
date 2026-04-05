@@ -109,6 +109,19 @@ export default async function AdminDashboard() {
         <p className="text-stone-500 mt-1">Welcome back, {session.name}</p>
       </div>
 
+      {/* Calendar Overview — first component */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-medium text-stone-800">Calendar Overview</h2>
+            <p className="text-sm text-stone-500">Read-only view. Go to Calendar for full editing.</p>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+          <DashboardCalendar />
+        </div>
+      </div>
+
       {/* Today's Overview */}
       {(stats.todayCheckIns > 0 || stats.todayCheckOuts > 0 || stats.incomingBookings > 0) && (
         <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl">
@@ -134,7 +147,7 @@ export default async function AdminDashboard() {
       )}
 
       {/* Quick Actions & Statistics */}
-      <div className="mb-8">
+      <div>
         <h2 className="text-lg font-medium text-stone-800 mb-4">Quick Actions</h2>
         <div className="flex flex-wrap items-start gap-6">
           <DashboardActions />
@@ -167,15 +180,6 @@ export default async function AdminDashboard() {
               <p className="text-xs text-stone-500">Guests Staying</p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Calendar Overview */}
-      <div>
-        <h2 className="text-lg font-medium text-stone-800 mb-4">Calendar Overview</h2>
-        <p className="text-sm text-stone-500 mb-4">Read-only view. Go to Calendar for full editing.</p>
-        <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
-          <DashboardCalendar />
         </div>
       </div>
     </div>

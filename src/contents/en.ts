@@ -4,7 +4,7 @@ export const en = {
     accommodation: 'accommodation',
     rooms: 'rooms',
     booking: 'booking',
-    about: 'about',
+    about: 'about'
   },
 
   // Header
@@ -14,16 +14,16 @@ export const en = {
       accommodations: 'Accommodations',
       about: 'About us',
       rooms: 'Rooms',
-      contact: 'Contact',
+      contact: 'Contact'
     },
-    bookNow: 'Book Now',
+    bookNow: 'Book Now'
   },
 
   // Hero Section
   hero: {
     headline: 'Lillybeth® Guesthouses',
     subtitle: 'Where relaxation begins already in the planning stage',
-    scrollDown: 'Scroll to explore',
+    scrollDown: 'Scroll to explore'
   },
 
   // Search Section
@@ -48,7 +48,8 @@ export const en = {
     selectBestMatch: 'Select Best Match',
     modifySearch: 'Modify Search',
     noResults: 'No Rooms Available',
-    noResultsDescription: "We couldn't find room combinations for {count} guests in the selected dates.",
+    noResultsDescription:
+      "We couldn't find room combinations for {count} guests in the selected dates.",
     tryDifferentDates: 'Try different dates',
     adjustGuestCount: 'Adjust guest count',
     filterByAccommodation: 'Filter by accommodation',
@@ -56,18 +57,21 @@ export const en = {
     selectAccommodation: 'Select at least one accommodation to see results',
     showAll: 'Show all',
     startSearchTitle: 'Find Your Perfect Stay',
-    startSearchDescription: 'Select your dates and number of guests above to see available accommodations.',
+    startSearchDescription:
+      'Select your dates and number of guests above to see available accommodations.'
   },
 
   // Buildings Section
   buildings: {
-    title: 'Our Properties',
-    subtitle: 'Each property offers a unique experience at Lake Balaton',
-    viewAll: 'View All Properties',
+    title: 'Our Accommodations',
+    subtitle:
+      'Two houses with capacity for 25 and 22 guests. ' +
+      'Stylish interiors & modern amenities & premium comfort',
+    viewAll: 'View All Accommodations',
     viewDetails: 'View Details',
     learnMore: 'Learn more',
     capacity: 'max {count} guests',
-    capacitySingular: 'max 1 guest',
+    capacitySingular: 'max 1 guest'
   },
 
   // About Section (homepage)
@@ -78,7 +82,7 @@ export const en = {
 
 Book directly with us and enjoy the guaranteed best price, with no hidden fees and direct contact with the accommodation provider.
 
-We believe in providing an exceptional guest experience that begins already in the planning stage – taking time to appreciate the beauty of Lake Balaton, savoring quiet moments, and creating memories that last a lifetime.`,
+We believe in providing an exceptional guest experience that begins already in the planning stage – taking time to appreciate the beauty of Lake Balaton, savoring quiet moments, and creating memories that last a lifetime.`
   },
 
   // About Page
@@ -88,21 +92,21 @@ We believe in providing an exceptional guest experience that begins already in t
     mapTitle: 'Find us',
     mapSubtitle: 'Our properties at Lake Balaton',
     buildingsTitle: 'Our Properties',
-    noContent: 'Content coming soon...',
+    noContent: 'Content coming soon...'
   },
 
   // Gallery Section
   gallery: {
     title: 'Gallery',
     subtitle: 'Glimpses of your future escape',
-    viewAll: 'View All Photos',
+    viewAll: 'View All Photos'
   },
 
   // Map Section
   map: {
-    title: 'Find Us',
-    subtitle: 'Our locations await your visit',
-    getDirections: 'Get Directions',
+    title: 'How to find us',
+    subtitle: 'We warmly welcome you!',
+    getDirections: 'Get Directions'
   },
 
   // Footer
@@ -111,18 +115,18 @@ We believe in providing an exceptional guest experience that begins already in t
     contact: {
       title: 'Contact',
       email: 'Email',
-      phone: 'Phone',
+      phone: 'Phone'
     },
     address: {
-      title: 'Address',
+      title: 'Address'
     },
     quickLinks: {
       title: 'Quick Links',
       privacy: 'Privacy Policy',
       terms: 'Terms & Conditions',
-      cancellation: 'Cancellation Policy',
+      cancellation: 'Cancellation'
     },
-    copyright: '© {year} Lillybeth®. All rights reserved.',
+    copyright: '© {year} Lillybeth®. All rights reserved.'
   },
 
   // Common
@@ -134,7 +138,7 @@ We believe in providing an exceptional guest experience that begins already in t
     previous: 'Previous',
     next: 'Next',
     backToHome: 'Back to Home',
-    max: 'max',
+    max: 'max'
   },
 
   // Lightbox
@@ -142,17 +146,19 @@ We believe in providing an exceptional guest experience that begins already in t
     close: 'Close gallery',
     previous: 'Previous image',
     next: 'Next image',
-    imageOf: 'of',
+    imageOf: 'of'
   },
 
   // Accommodation Detail Page
   accommodation: {
-    title: 'Accommodation',
-    titlePlural: 'Accommodations',
+    title: 'Our Accommodations',
+    titlePlural: 'Our Accommodations',
     description: 'Description',
     amenities: 'Amenities',
-    houseRules: 'House Rules',
-    bookingConditions: 'Booking Conditions',
+    houseRules: 'Useful Information',
+    bookingConditions: 'Booking Information',
+    paymentMethods: 'Payment',
+    deposit: 'Deposit',
     location: 'Location',
     roomTypes: 'Available Rooms',
     checkAvailability: 'Check Availability',
@@ -165,7 +171,7 @@ We believe in providing an exceptional guest experience that begins already in t
     capacity: 'max {count} guests',
     capacitySingular: 'max 1 guest',
     noRoomsAvailable: 'No rooms available at this accommodation.',
-    backToAccommodations: 'Back to Accommodations',
+    backToAccommodations: 'Back to Accommodations'
   },
 
   // Room Types
@@ -175,7 +181,7 @@ We believe in providing an exceptional guest experience that begins already in t
     capacity: 'Capacity',
     amenities: 'Amenities',
     viewRoom: 'View Room',
-    bookRoom: 'Book Room',
+    bookRoom: 'Book Room'
   },
 
   // Booking Page
@@ -203,7 +209,8 @@ We believe in providing an exceptional guest experience that begins already in t
     processing: 'Processing...',
     secureBooking: 'Your booking is secure and confirmed instantly',
     confirmationTitle: 'Booking Confirmed!',
-    confirmationMessage: 'Thank you for your booking. We have sent a confirmation email to your address.',
+    confirmationMessage:
+      'Thank you for your booking. We have sent a confirmation email to your address.',
     referenceNumber: 'Reference',
     clearCart: 'Clear all',
     selectDates: 'Select dates',
@@ -213,7 +220,7 @@ We believe in providing an exceptional guest experience that begins already in t
     nightsPlural: 'nights',
     roomSingular: 'room',
     roomsPlural: 'rooms',
-    selected: 'selected',
+    selected: 'selected'
   },
 
   // Thank You Page
@@ -226,8 +233,8 @@ We believe in providing an exceptional guest experience that begins already in t
     contactSupport: 'Contact our support team',
     noBookingFound: 'No Booking Found',
     noBookingDescription: 'We could not find booking details. Please start a new search.',
-    whatsApp: 'WhatsApp',
-  },
-};
+    whatsApp: 'WhatsApp'
+  }
+}
 
 export type ContentKeys = typeof en;

@@ -123,7 +123,7 @@ export function AccommodationRules({
                 {paymentMethods && (
                   <div>
                     <h4 className="font-medium text-stone-800 mb-2">
-                      Payment Methods
+                      {t.accommodation.paymentMethods}
                     </h4>
                     <p className="text-stone-600 text-sm leading-relaxed">
                       {paymentMethods}
@@ -135,7 +135,7 @@ export function AccommodationRules({
                 {depositInfo && (
                   <div>
                     <h4 className="font-medium text-stone-800 mb-2">
-                      Deposit
+                      {t.accommodation.deposit}
                     </h4>
                     <p className="text-stone-600 text-sm leading-relaxed">
                       {depositInfo}

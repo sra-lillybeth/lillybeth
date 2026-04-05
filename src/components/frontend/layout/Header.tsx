@@ -64,7 +64,7 @@ export function Header() {
                 height={40}
                 className="rounded-lg"
               />
-              <span className="font-birthstone text-2xl tracking-wide text-white">
+              <span className="font-birthstone text-3xl sm:text-4xl tracking-wide text-white">
                 Lillybeth<sup>®</sup>
               </span>
             </Link>

@@ -22,6 +22,10 @@ export async function GET() {
         roomTypes: {
           include: {
             dateRangePrices: true,
+            rooms: {
+              where: { isActive: true },
+              select: { id: true },
+            },
           },
         },
       },
@@ -43,8 +47,17 @@ export async function GET() {
         nameStr = nameObj['en'] || nameObj['hu'] || Object.values(nameObj)[0] || '';
       }
 
-      // Calculate total capacity from room types
-      const totalCapacity = accommodation.roomTypes.reduce((sum, rt) => sum + (rt.capacity || 0), 0);
+      // roomCount = total physical rooms across all room types
+      const roomCount = accommodation.roomTypes.reduce(
+        (sum, rt) => sum + (rt.rooms?.length || 0),
+        0
+      );
+
+      // totalCapacity = sum of (capacity × rooms) for each room type
+      const totalCapacity = accommodation.roomTypes.reduce(
+        (sum, rt) => sum + (rt.capacity || 0) * (rt.rooms?.length || 0),
+        0
+      );
 
       return {
         id: accommodation.id,
@@ -58,7 +71,7 @@ export async function GET() {
           alt: img.filename || null,
         })),
         minPrice,
-        roomCount: accommodation.roomTypes.length,
+        roomCount,
         totalCapacity,
       };
     });

@@ -21,7 +21,7 @@ interface AccommodationAmenitiesProps {
   getLocalizedText: (field: Record<string, string> | string | null | undefined) => string;
 }
 
-const INITIAL_VISIBLE_COUNT = 8;
+const INITIAL_VISIBLE_COUNT = 12;
 
 // Default icons for common amenity types
 const getDefaultIcon = (name: string): string => {

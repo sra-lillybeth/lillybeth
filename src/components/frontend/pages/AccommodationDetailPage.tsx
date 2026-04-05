@@ -42,6 +42,7 @@ interface RoomType {
   description: Record<string, string> | string | null;
   capacity: number;
   minPrice: number | null;
+  availableRooms: number;
   images: AccommodationImage[];
   amenityCategories: AmenityCategory[];
 }
@@ -176,8 +177,14 @@ export function AccommodationDetailPage({ slug, routeLanguage }: AccommodationDe
   // Use the single slug (same for all languages)
   const currentSlug = accommodation.slug || slug;
 
-  // Calculate total capacity from room types
-  const totalCapacity = accommodation.roomTypes.reduce((sum, rt) => sum + rt.capacity, 0);
+  // maxRooms = total count of physical rooms across all room types
+  const maxRooms = accommodation.roomTypes.reduce((sum, rt) => sum + (rt.availableRooms || 0), 0);
+
+  // maxGuests = sum of (capacity per room × number of rooms) for each room type
+  const maxGuests = accommodation.roomTypes.reduce(
+    (sum, rt) => sum + rt.capacity * (rt.availableRooms || 0),
+    0
+  );
 
   // Get a short highlight text from description (first sentence or first 100 chars)
   const fullDescription = getLocalizedText(accommodation.description);
@@ -192,7 +199,8 @@ export function AccommodationDetailPage({ slug, routeLanguage }: AccommodationDe
         images={accommodation.images}
         title={accommodationName}
         address={accommodation.address}
-        capacity={totalCapacity}
+        maxRooms={maxRooms > 0 ? maxRooms : undefined}
+        maxGuests={maxGuests > 0 ? maxGuests : undefined}
         highlightText={highlightText && highlightText.length <= 150 ? highlightText : undefined}
       />
 
@@ -207,17 +215,17 @@ export function AccommodationDetailPage({ slug, routeLanguage }: AccommodationDe
         description={getLocalizedText(accommodation.description)}
       />
 
-      {/* Gallery */}
-      {accommodation.images.length > 0 && (
-        <AccommodationGallery images={accommodation.images} />
-      )}
-
-      {/* Amenities with collapsible content */}
+      {/* Amenities with collapsible content — before gallery */}
       {accommodation.amenityCategories.length > 0 && (
         <AccommodationAmenities
           amenityCategories={accommodation.amenityCategories}
           getLocalizedText={getLocalizedText}
         />
+      )}
+
+      {/* Gallery */}
+      {accommodation.images.length > 0 && (
+        <AccommodationGallery images={accommodation.images} />
       )}
 
       {/* House Rules & Booking Conditions */}

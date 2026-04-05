@@ -4,26 +4,26 @@ export const hu = {
     accommodation: 'szallas',
     rooms: 'szobak',
     booking: 'foglalas',
-    about: 'rolunk',
+    about: 'rolunk'
   },
 
   // Header
   header: {
     nav: {
       home: 'Főoldal',
-      accommodations: 'Szállások',
+      accommodations: 'Szállásaink',
       about: 'Rólunk',
       rooms: 'Szobák',
-      contact: 'Kapcsolat',
+      contact: 'Kapcsolat'
     },
-    bookNow: 'Foglalás',
+    bookNow: 'Foglalás'
   },
 
   // Hero Section
   hero: {
     headline: 'Lillybeth® Vendégházak',
     subtitle: 'Ahol a pihenés már a tervezésnél elkezdődik',
-    scrollDown: 'Görgessen a felfedezéshez',
+    scrollDown: 'Görgessen a felfedezéshez'
   },
 
   // Search Section
@@ -34,7 +34,7 @@ export const hu = {
     guests: 'Vendégek',
     guestSingular: 'Vendég',
     guestPlural: 'Vendég',
-    searchButton: 'Keresés',
+    searchButton: 'Szabad helyek ellenőrzése',
     selectDate: 'Válasszon dátumot',
     selectCheckIn: 'Válassza ki az érkezés dátumát',
     selectCheckOut: 'Válassza ki a távozás dátumát',
@@ -48,7 +48,8 @@ export const hu = {
     selectBestMatch: 'Legjobb ajánlat kiválasztása',
     modifySearch: 'Keresés módosítása',
     noResults: 'Nincs elérhető szoba',
-    noResultsDescription: 'Nem találtunk szobakombinációt {count} vendég számára a kiválasztott időszakban.',
+    noResultsDescription:
+      'Nem találtunk szobakombinációt {count} vendég számára a kiválasztott időszakban.',
     tryDifferentDates: 'Próbáljon más dátumot',
     adjustGuestCount: 'Módosítsa a vendégszámot',
     filterByAccommodation: 'Szűrés szállás szerint',
@@ -56,18 +57,21 @@ export const hu = {
     selectAccommodation: 'Válasszon ki legalább egy szállást az eredmények megtekintéséhez',
     showAll: 'Összes megjelenítése',
     startSearchTitle: 'Találja meg tökéletes szállását',
-    startSearchDescription: 'Válassza ki a dátumokat és a vendégek számát a fenti mezőkben az elérhető szállások megtekintéséhez.',
+    startSearchDescription:
+      'Válassza ki a dátumokat és a vendégek számát a fenti mezőkben az elérhető szállások megtekintéséhez.'
   },
 
   // Buildings Section
   buildings: {
-    title: 'Épületeink',
-    subtitle: 'Minden épület egyedi élményt kínál a Balatonnál',
+    title: 'Szállásaink',
+    subtitle:
+      'Két, igényesen kialakított vendégház 25 illetve 22 fő befogadóképességgel\n' +
+      'Klasszikus stílus & modern felszereltség & prémium komfort',
     viewAll: 'Összes épület',
     viewDetails: 'Részletek',
     learnMore: 'Tudjon meg többet',
     capacity: 'max {count} fő',
-    capacitySingular: 'max 1 fő',
+    capacitySingular: 'max 1 fő'
   },
 
   // About Section (homepage)
@@ -78,7 +82,7 @@ export const hu = {
 
 Foglaljon közvetlenül nálunk, garantáltan a legjobb áron, rejtett költségek nélkül – közvetlen kapcsolatban a szállásadóval.
 
-Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdődik – időt szánunk a Balaton szépségének megbecsülésére, élvezzük a csendes pillanatokat, és egy életen át tartó emlékeket teremtünk.`,
+Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdődik – időt szánunk a Balaton szépségének megbecsülésére, élvezzük a csendes pillanatokat, és egy életen át tartó emlékeket teremtünk.`
   },
 
   // About Page
@@ -88,21 +92,21 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     mapTitle: 'Találjon meg minket',
     mapSubtitle: 'Épületeink a Balatonnál',
     buildingsTitle: 'Épületeink',
-    noContent: 'Tartalom hamarosan...',
+    noContent: 'Tartalom hamarosan...'
   },
 
   // Gallery Section
   gallery: {
     title: 'Galéria',
     subtitle: 'Pillanatok a jövőbeli menedékéből',
-    viewAll: 'Összes fotó',
+    viewAll: 'Összes fotó'
   },
 
   // Map Section
   map: {
     title: 'Itt talál minket',
-    subtitle: 'Helyszíneink várják látogatását',
-    getDirections: 'Útvonaltervezés',
+    subtitle: 'Szeretettel várjuk!',
+    getDirections: 'Útvonaltervezés'
   },
 
   // Footer
@@ -111,18 +115,18 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     contact: {
       title: 'Kapcsolat',
       email: 'E-mail',
-      phone: 'Telefon',
+      phone: 'Telefon'
     },
     address: {
-      title: 'Cím',
+      title: 'Cím'
     },
     quickLinks: {
       title: 'Gyors linkek',
       privacy: 'Adatvédelmi irányelvek',
       terms: 'Általános szerződési feltételek',
-      cancellation: 'Lemondási feltételek',
+      cancellation: 'Lemondás'
     },
-    copyright: '© {year} Lillybeth®. Minden jog fenntartva.',
+    copyright: '© {year} Lillybeth®. Minden jog fenntartva.'
   },
 
   // Common
@@ -134,7 +138,7 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     previous: 'Előző',
     next: 'Következő',
     backToHome: 'Vissza a főoldalra',
-    max: 'max',
+    max: 'max'
   },
 
   // Lightbox
@@ -142,22 +146,24 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     close: 'Galéria bezárása',
     previous: 'Előző kép',
     next: 'Következő kép',
-    imageOf: '/',
+    imageOf: '/'
   },
 
   // Accommodation Detail Page
   accommodation: {
     title: 'Szállás',
-    titlePlural: 'Szállások',
+    titlePlural: 'Szállásaink',
     description: 'Leírás',
     amenities: 'Felszereltség',
-    houseRules: 'Házirend',
-    bookingConditions: 'Foglalási feltételek',
-    location: 'Helyszín',
+    houseRules: 'Fontos tudnivalók',
+    bookingConditions: 'Foglalási információk',
+    paymentMethods: 'Fizetés',
+    deposit: 'Foglaló',
+    location: 'Itt talál minket',
     roomTypes: 'Elérhető szobák',
     checkAvailability: 'Elérhetőség ellenőrzése',
-    showMore: 'Több mutatása',
-    showLess: 'Kevesebb mutatása',
+    showMore: 'Bővebben',
+    showLess: 'Kevesebb',
     fromPrice: 'Induló ár',
     perNight: '/ éjszaka',
     viewDetails: 'Részletek',
@@ -165,7 +171,7 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     capacity: 'max {count} fő',
     capacitySingular: 'max 1 fő',
     noRoomsAvailable: 'Jelenleg nincs elérhető szoba ennél a szállásnál.',
-    backToAccommodations: 'Vissza a szállásokhoz',
+    backToAccommodations: 'Vissza a szállásokhoz'
   },
 
   // Room Types
@@ -175,7 +181,7 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     capacity: 'Férőhely',
     amenities: 'Felszereltség',
     viewRoom: 'Szoba megtekintése',
-    bookRoom: 'Szoba foglalása',
+    bookRoom: 'Szoba foglalása'
   },
 
   // Booking Page
@@ -213,7 +219,7 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     nightsPlural: 'éjszaka',
     roomSingular: 'szoba',
     roomsPlural: 'szoba',
-    selected: 'kiválasztva',
+    selected: 'kiválasztva'
   },
 
   // Thank You Page
@@ -226,6 +232,6 @@ Hiszünk abban, hogy a kivételes vendégélmény már a tervezésnél elkezdőd
     contactSupport: 'Lépjen kapcsolatba ügyfélszolgálatunkkal',
     noBookingFound: 'Foglalás nem található',
     noBookingDescription: 'Nem találtuk a foglalás adatait. Kérjük, indítson új keresést.',
-    whatsApp: 'WhatsApp',
-  },
-};
+    whatsApp: 'WhatsApp'
+  }
+}

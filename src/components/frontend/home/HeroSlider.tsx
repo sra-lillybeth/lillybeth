@@ -61,7 +61,11 @@ export function HeroSlider() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const slidesCount = heroImages.length;
+  // Keep only video slides
+  const videoSlides = heroImages.filter((m) => m.type === 'video');
+  const slides = videoSlides.length > 0 ? videoSlides : [];
+
+  const slidesCount = slides.length;
 
   // Go to next slide
   const nextSlide = useCallback(() => {
@@ -87,19 +91,16 @@ export function HeroSlider() {
     setTimeout(() => setIsTransitioning(false), heroConfig.transitionDuration);
   }, [currentIndex, isTransitioning]);
 
-  // Check if current slide is a video
-  const currentMedia = heroImages[currentIndex];
-  const isCurrentSlideVideo = currentMedia?.type === 'video';
+  // All slides are videos — no image auto-play needed
+  const currentMedia = slides[currentIndex];
 
-  // Auto-play functionality (only for images, videos advance on end)
+  // Auto-play is not needed for videos (they advance on end)
+  // Keep the hook but skip interval for videos
   useEffect(() => {
     if (!isAutoPlaying || heroConfig.autoPlayInterval === 0) return;
-    // Skip auto-play interval for videos - they advance when they end
-    if (isCurrentSlideVideo) return;
-
-    const interval = setInterval(nextSlide, heroConfig.autoPlayInterval);
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, nextSlide, isCurrentSlideVideo]);
+    // Videos advance on end — no interval needed
+    return;
+  }, [isAutoPlaying]);
 
   // Handle video end - advance to next slide
   const handleVideoEnded = useCallback(() => {
@@ -133,15 +134,32 @@ export function HeroSlider() {
     }
   };
 
+  // Empty state: no video slides configured
+  if (slides.length === 0) {
+    return (
+      <section className="relative h-screen w-full overflow-hidden bg-stone-900 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-birthstone text-white mb-6 tracking-wide">
+            {renderBrand(t.hero.headline)}
+          </h1>
+          <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto">
+            {t.hero.subtitle}
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       className="relative h-screen w-full overflow-hidden"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      aria-label="Hero image slider"
+      aria-label="Hero video slider"
     >
       {/* Slides */}
-      {heroImages.map((media, index) => (
+      {slides.map((media, index) => (
         <div
           key={media.id}
           className={`
@@ -236,7 +254,7 @@ export function HeroSlider() {
       {/* Dot Indicators */}
       {heroConfig.showDots && slidesCount > 1 && (
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-3">
-          {heroImages.map((_, index) => (
+          {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}

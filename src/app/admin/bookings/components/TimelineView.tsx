@@ -30,6 +30,7 @@ interface TimelineBooking extends Booking {
     id: string
     guestName: string
     totalAmount: number | null
+    hasCustomFinalAmount: boolean
     hasCustomHufPrice: boolean
     customHufPrice: number | null
     _count: { bookings: number }
@@ -656,11 +657,21 @@ export default function TimelineView({
   const getTimelineRows = (): TimelineRow[] => {
     if (!timelineData?.buildings) return []
     const rows: TimelineRow[] = []
+
+    const sortRoomsNumerically = (rooms: Room[]) =>
+      [...rooms].sort((a, b) => {
+        const aNum = parseInt(a.name.replace(/\D+/g, ''), 10)
+        const bNum = parseInt(b.name.replace(/\D+/g, ''), 10)
+        if (!isNaN(aNum) && !isNaN(bNum) && aNum !== bNum) return aNum - bNum
+        return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+      })
+
     timelineData.buildings.forEach((building) => {
       rows.push({ type: 'building', building })
       building.roomTypes?.forEach((roomType) => {
         // Skip roomType row - show rooms directly under building
-        roomType.rooms?.forEach((room) => {
+        const sortedRooms = sortRoomsNumerically(roomType.rooms || [])
+        sortedRooms.forEach((room) => {
           rows.push({
             type: 'room',
             room,
@@ -855,7 +866,7 @@ export default function TimelineView({
       </div>
 
       {/* Timeline Container */}
-      <div className="flex bg-white rounded-xl border border-stone-200 overflow-hidden h-[700px]">
+      <div className="flex bg-white rounded-xl border border-stone-200 overflow-hidden h-[500px] sm:h-[700px]">
         <div className="relative w-full h-full" ref={timelineRef}>
           {/* Fixed corner */}
           <div
@@ -1211,48 +1222,35 @@ export default function TimelineView({
                           }`} />
                         </div>
                       ) : (
-                        /* Default / Weekly view */
-                        <div className="h-full px-2 py-1 flex items-center gap-2 overflow-hidden">
-                          <img src={SOURCE_ICONS[booking.source]} alt={booking.source} className="w-4 h-4 object-contain flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-1">
-                              <p className={`text-xs font-medium truncate ${colors.text}`}>
-                                {booking.guestName}
-                              </p>
-                              {isGrouped && (
-                                <span className="text-[8px] px-1 py-0.5 font-bold bg-indigo-100 text-indigo-700 rounded flex-shrink-0" title={`Group: ${booking.groupRoomCount || '?'} rooms`}>
-                                  G{booking.groupRoomCount || ''}
-                                </span>
-                              )}
-                            </div>
-                            <p className={`text-xs truncate ${colors.text} opacity-70`}>
-                              {booking.guestCount} guest{booking.guestCount !== 1 ? 's' : ''}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-1 flex-shrink-0">
-                            {/* Custom HUF price indicator */}
-                            {booking.hasCustomHufPrice && booking.customHufPrice && (
-                              <span className="text-[9px] px-1 py-0.5 font-bold bg-purple-100 text-purple-700 rounded" title="Custom HUF price">
-                                HUF
+                        /* Default / Weekly view — always show icon + first 3 chars */
+                        <div className="h-full px-1.5 flex items-center gap-1 overflow-hidden">
+                          {/* Source icon — always visible */}
+                          <img src={SOURCE_ICONS[booking.source]} alt={booking.source} className="w-3.5 h-3.5 object-contain flex-shrink-0" />
+                          {/* Name: first 3 chars guaranteed visible, rest truncates */}
+                          <div className="flex items-center min-w-0 flex-1">
+                            <span className={`text-xs font-semibold flex-shrink-0 ${colors.text}`}>
+                              {booking.guestName.slice(0, 3)}
+                            </span>
+                            <span className={`text-xs font-medium truncate min-w-0 ${colors.text}`}>
+                              {booking.guestName.slice(3)}
+                            </span>
+                            {isGrouped && (
+                              <span className="ml-0.5 text-[8px] px-0.5 py-0.5 font-bold bg-indigo-100 text-indigo-700 rounded flex-shrink-0" title={`Group: ${booking.groupRoomCount || '?'} rooms`}>
+                                G{booking.groupRoomCount || ''}
                               </span>
                             )}
-                            {/* Payment status indicator */}
-                            <span className={`w-2 h-2 rounded-full ${
+                          </div>
+                          {/* Status indicators */}
+                          <div className="flex items-center gap-0.5 flex-shrink-0">
+                            {booking.hasCustomHufPrice && booking.customHufPrice && (
+                              <span className="text-[8px] px-0.5 font-bold text-purple-700" title="Custom HUF price">Ft</span>
+                            )}
+                            <span className={`w-1.5 h-1.5 rounded-full ${
                               booking.paymentStatus === 'FULLY_PAID' ? 'bg-green-500' :
                               booking.paymentStatus === 'PARTIALLY_PAID' ? 'bg-amber-500' :
                               booking.paymentStatus === 'REFUNDED' ? 'bg-red-500' :
                               'bg-stone-300'
                             }`} title={PAYMENT_LABELS[booking.paymentStatus]} />
-                            {booking.notes && (
-                              <svg className={`w-3 h-3 ${colors.text}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                              </svg>
-                            )}
-                            {booking.additionalPrices.length > 0 && (
-                              <svg className={`w-3 h-3 ${colors.text}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            )}
                           </div>
                         </div>
                       )}
@@ -1362,21 +1360,44 @@ export default function TimelineView({
                 </span>
               </div>
               <div className="text-right">
-                {hoveredBooking.totalAmount && (
-                  <span className="font-semibold text-stone-900">{hoveredBooking.totalAmount.toFixed(2)} EUR</span>
-                )}
-                {hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice && (
-                  <div className="text-xs font-medium text-purple-700">
-                    {hoveredBooking.customHufPrice.toLocaleString()} Ft
+                {/* Group booking: show group final amount if custom, otherwise per-room */}
+                {hoveredBooking.groupId && hoveredBooking.group?.hasCustomFinalAmount && hoveredBooking.group?.totalAmount ? (
+                  <div>
+                    <span className="text-[10px] text-stone-500 block">Custom Group Final</span>
+                    <span className="font-semibold text-orange-700">{hoveredBooking.group.totalAmount.toFixed(2)} EUR</span>
                   </div>
-                )}
+                ) : hoveredBooking.totalAmount ? (
+                  <span className="font-semibold text-stone-900">{hoveredBooking.totalAmount.toFixed(2)} EUR</span>
+                ) : null}
+                {/* HUF price: prefer group-level, fall back to booking-level */}
+                {(() => {
+                  const hufPrice = hoveredBooking.groupId
+                    ? (hoveredBooking.group?.hasCustomHufPrice && hoveredBooking.group?.customHufPrice ? hoveredBooking.group.customHufPrice : null)
+                    : (hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice ? hoveredBooking.customHufPrice : null)
+                  return hufPrice ? (
+                    <div className="text-xs font-medium text-purple-700">
+                      {hufPrice.toLocaleString()} Ft
+                    </div>
+                  ) : null
+                })()}
               </div>
             </div>
-            {hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice && (
-              <div className="mt-2 px-2 py-1 bg-purple-50 border border-purple-200 rounded text-xs text-purple-700">
-                <span className="font-medium">Custom HUF price</span> – manually agreed amount
+            {/* Custom price banners */}
+            {hoveredBooking.groupId && hoveredBooking.group?.hasCustomFinalAmount && hoveredBooking.group?.totalAmount && (
+              <div className="mt-2 px-2 py-1 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700">
+                <span className="font-medium">Custom final amount</span> – manually agreed group price
               </div>
             )}
+            {(() => {
+              const hasHuf = hoveredBooking.groupId
+                ? (hoveredBooking.group?.hasCustomHufPrice && hoveredBooking.group?.customHufPrice)
+                : (hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice)
+              return hasHuf ? (
+                <div className="mt-2 px-2 py-1 bg-purple-50 border border-purple-200 rounded text-xs text-purple-700">
+                  <span className="font-medium">Custom HUF price</span> – manually agreed amount
+                </div>
+              ) : null
+            })()}
           </div>
 
           <p className="mt-2 text-xs text-amber-600">Click to view details & manage</p>
