@@ -140,7 +140,7 @@ export function HeroSlider() {
       <section className="relative h-screen w-full overflow-hidden bg-stone-900 flex items-center justify-center">
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-20 text-center px-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-birthstone text-white mb-6 tracking-wide">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-carattere! text-white mb-6 tracking-wide">
             {renderBrand(t.hero.headline)}
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto">
@@ -199,7 +199,7 @@ export function HeroSlider() {
       {/* Content Overlay */}
       <div className="absolute inset-0 z-20 flex items-center justify-center">
         <div className="text-center px-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-birthstone text-white mb-6 tracking-wide">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-carattere! text-white mb-6 tracking-wide">
             {renderBrand(t.hero.headline)}
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 font-light max-w-2xl mx-auto">

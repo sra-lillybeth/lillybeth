@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Birthstone, Inter, Urbanist } from 'next/font/google'
+import { Birthstone, Carattere, Inter, Urbanist } from 'next/font/google'
 import './globals.css'
 
 const birthstone = Birthstone({
@@ -20,6 +20,13 @@ const urbanist = Urbanist({
   display: 'swap'
 })
 
+const carattere = Carattere({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-carattere',
+  display: 'swap'
+})
+
 export const metadata: Metadata = {
   title: {
     default: 'Lillybeth® Guesthouses | Lake Balaton',
@@ -37,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${birthstone.variable} ${inter.variable} ${urbanist.variable} font-sans`}>
+      <body className={`${birthstone.variable} ${inter.variable} ${urbanist.variable} ${carattere.variable} font-sans`}>
         {children}
       </body>
     </html>

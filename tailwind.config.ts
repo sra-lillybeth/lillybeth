@@ -10,7 +10,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         serif: ['var(--font-birthstone)', 'cursive'],
-        heading: ['var(--font-urbanist)', 'sans-serif']
+        heading: ['var(--font-urbanist)', 'sans-serif'],
+        carattere: ['var(--font-carattere)', 'cursive']
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
