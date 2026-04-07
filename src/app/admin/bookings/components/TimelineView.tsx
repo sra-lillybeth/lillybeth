@@ -71,7 +71,7 @@ const VIEW_MODE_CONFIG = {
     roomHeight: 36,
     headerRowHeight: 28,
     roomColumnWidth: 100,
-    headerHeight: 54,
+    headerHeight: 70,
     defaultDays: 90,
     showFullLabels: false,
   },
@@ -883,7 +883,7 @@ export default function TimelineView({
           >
             <div
               ref={scrollContainerRef}
-              className="h-full overflow-x-auto"
+              className="h-full overflow-x-auto overflow-y-hidden"
               style={{ scrollbarWidth: 'none' }}
               onScroll={(e) => {
                 const target = e.target as HTMLDivElement
