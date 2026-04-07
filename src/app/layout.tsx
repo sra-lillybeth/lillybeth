@@ -1,28 +1,33 @@
 import type { Metadata } from 'next'
-import { Birthstone, Inter } from 'next/font/google'
+import { Birthstone, Inter, Urbanist } from 'next/font/google'
 import './globals.css'
 
 const birthstone = Birthstone({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-birthstone',
-  display: 'swap',
+  display: 'swap'
 })
 
 const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-inter'
 })
 
+const urbanist = Urbanist({
+  subsets: ['latin'],
+  variable: '--font-urbanist',
+  display: 'swap'
+})
 
 export const metadata: Metadata = {
   title: {
     default: 'Lillybeth® Guesthouses | Lake Balaton',
-    template: '%s | Lillybeth®',
+    template: '%s | Lillybeth®'
   },
   description:
     'Book your stay at Lillybeth® Guesthouses on Lake Balaton. Cozy rooms, stunning views, and authentic Hungarian hospitality. Best price guaranteed.',
-  metadataBase: new URL('https://lillybeth.hu'),
+  metadataBase: new URL('https://lillybeth.hu')
 }
 
 export default function RootLayout({
@@ -32,7 +37,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${birthstone.variable} ${inter.variable} font-sans`}>{children}</body>
+      <body className={`${birthstone.variable} ${inter.variable} ${urbanist.variable} font-sans`}>
+        {children}
+      </body>
     </html>
   )
 }
