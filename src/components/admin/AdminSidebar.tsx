@@ -23,7 +23,7 @@ const navItems = [
   },
   {
     label: 'Dashboard',
-    href: '/admin',
+    href: '/admin/dashboard',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -117,7 +117,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
     <>
       {/* Mobile header */}
       <div className="fixed top-0 left-0 right-0 h-14 bg-white border-b border-stone-200 flex items-center justify-between px-4 z-40 md:hidden">
-        <Link href="/admin" className="font-semibold text-stone-800">
+        <Link href="/admin/calendar" className="font-semibold text-stone-800">
           Lillybeth Admin
         </Link>
         <button
@@ -148,7 +148,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
       <aside className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-stone-200 flex flex-col z-50 transform transition-transform duration-200 ease-in-out md:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       {/* Logo */}
       <div className="p-6 border-b border-stone-100">
-        <Link href="/admin" className="block">
+        <Link href="/admin/calendar" className="block">
           <h1 className="font-semibold text-xl text-stone-800">Lillybeth</h1>
           <span className="text-xs text-stone-500 uppercase tracking-wider">Admin Panel</span>
         </Link>

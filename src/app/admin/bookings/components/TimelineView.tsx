@@ -979,7 +979,7 @@ export default function TimelineView({
           {/* Fixed left column */}
           <div
             data-room-sidebar
-            className="absolute left-0 bg-white border-r border-stone-200 z-20 overflow-y-auto"
+            className="absolute left-0 bg-white border-r border-stone-200 z-20 overflow-y-auto [&::-webkit-scrollbar]:hidden"
             style={{ top: HEADER_HEIGHT, bottom: 0, width: ROOM_COLUMN_WIDTH, scrollbarWidth: 'none' }}
             onScroll={(e) => {
               const target = e.target as HTMLDivElement
@@ -1044,12 +1044,13 @@ export default function TimelineView({
           {/* Main content area */}
           <div
             id="timeline-content"
-            className="absolute overflow-auto"
+            className="absolute overflow-auto [&::-webkit-scrollbar]:hidden"
             style={{
               top: HEADER_HEIGHT,
               left: ROOM_COLUMN_WIDTH,
               right: 0,
               bottom: 0,
+              scrollbarWidth: 'none',
             }}
             onScroll={(e) => {
               const target = e.target as HTMLDivElement
