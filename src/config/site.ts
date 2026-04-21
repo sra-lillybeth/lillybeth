@@ -41,8 +41,8 @@ export const siteConfig = {
    * Social media links (set to null if not applicable)
    */
   social: {
-    facebook: 'https://facebook.com/lillybeth',
-    instagram: 'https://instagram.com/lillybeth',
+    facebook: 'https://www.facebook.com/p/Villa-Lillybeth-100094882294975/',
+    instagram: null,
     tripadvisor: null,
   },
 
