@@ -290,16 +290,18 @@ export default function TimelineView({
 
     // If booking doesn't overlap with visible range, return null indicator
     if (effectiveEnd <= effectiveStart) {
-      return { left: 0, width: 0, visible: false }
+      return { left: 0, width: 0, visible: false, clippedLeft: false }
     }
 
     // Calculate position based on clipped range
-    // Add DAY_WIDTH/2 offset only if we're showing the actual booking start
-    const startOffset = startDiff >= 0 ? DAY_WIDTH / 2 : 0
+    // Right edge is always at endDiff * DAY_WIDTH + DAY_WIDTH/2
+    // Left edge starts at DAY_WIDTH/2 offset only if booking starts in visible range
+    const clippedLeft = startDiff < 0
+    const startOffset = clippedLeft ? 0 : DAY_WIDTH / 2
     const left = effectiveStart * DAY_WIDTH + startOffset
-    const width = (effectiveEnd - effectiveStart) * DAY_WIDTH - (startDiff >= 0 ? 0 : startOffset)
+    const width = effectiveEnd * DAY_WIDTH + DAY_WIDTH / 2 - left
 
-    return { left, width, visible: true }
+    return { left, width, visible: true, clippedLeft }
   }
 
   // Navigate timeline
@@ -1262,7 +1264,7 @@ export default function TimelineView({
                 const rowTop = calculateRowTop(rowIndex)
 
                 return roomBookings.map((booking) => {
-                  const { left, width, visible } = getBookingPosition(booking)
+                  const { left, width, visible, clippedLeft } = getBookingPosition(booking)
                   const colors = SOURCE_COLORS[booking.source]
                   const statusClass = TIMELINE_STATUS_OPACITY[booking.status]
 
@@ -1279,7 +1281,7 @@ export default function TimelineView({
                     <div
                       key={booking.id}
                       draggable={!readOnly && !isUpdating}
-                      className={`absolute rounded-lg border-2 ${colors.bg} ${colors.border} ${statusClass} ${
+                      className={`absolute border-2 ${clippedLeft ? 'rounded-r-lg' : 'rounded-lg'} ${colors.bg} ${colors.border} ${statusClass} ${
                         isBookingUpdating
                           ? 'animate-pulse cursor-wait pointer-events-none z-30'
                           : isUpdating
@@ -1335,6 +1337,11 @@ export default function TimelineView({
                       ) : viewMode === 'monthly' ? (
                         /* Compact monthly view */
                         <div className="h-full px-1 flex items-center gap-1 overflow-hidden">
+                          {clippedLeft && (
+                            <svg className="w-2.5 h-2.5 flex-shrink-0 opacity-60" viewBox="0 0 8 12" fill="currentColor">
+                              <path d="M7 0L1 6l6 6V0z" />
+                            </svg>
+                          )}
                           {isGrouped && (
                             <span
                               className="w-2 h-2 bg-indigo-500 rounded-sm flex-shrink-0"
@@ -1373,6 +1380,11 @@ export default function TimelineView({
                       ) : (
                         /* Default / Weekly view — always show icon + first 3 chars */
                         <div className="h-full px-1.5 flex items-center gap-1 overflow-hidden">
+                          {clippedLeft && (
+                            <svg className="w-3 h-3 flex-shrink-0 opacity-60" viewBox="0 0 8 12" fill="currentColor">
+                              <path d="M7 0L1 6l6 6V0z" />
+                            </svg>
+                          )}
                           {/* Source icon — always visible */}
                           <img
                             src={SOURCE_ICONS[booking.source]}
