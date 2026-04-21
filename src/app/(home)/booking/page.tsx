@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   keywords: seoConfig.booking.en.keywords,
   robots: { index: true, follow: true },
   alternates: {
-    canonical: `${siteUrl}/frontend/booking`,
+    canonical: `${siteUrl}/booking`,
   },
   openGraph: {
     title: seoConfig.booking.en.title,
     description: seoConfig.booking.en.description,
-    url: `${siteUrl}/frontend/booking`,
+    url: `${siteUrl}/booking`,
     type: 'website',
     images: [{ url: `${siteUrl}/lillybeth-logo.png`, width: 400, height: 400 }],
   },

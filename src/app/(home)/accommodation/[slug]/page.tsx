@@ -13,26 +13,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const accommodation = await getAccommodationForSeo(slug);
   const name = accommodation ? accommodation.name : slug;
-  const desc = accommodation ? getLocalizedText(accommodation.description, 'de') : '';
+  const desc = accommodation ? getLocalizedText(accommodation.description, 'en') : '';
   const image = accommodation?.images[0]?.url ?? `${siteUrl}/lillybeth-logo.png`;
 
   return {
     title: `${name} | Lillybeth®`,
-    description: desc.slice(0, 160) || seoConfig.accommodationDetail.de.description,
+    description: desc.slice(0, 160) || seoConfig.accommodationDetail.en.description,
     robots: { index: true, follow: true },
     alternates: {
-      canonical: `${siteUrl}/frontend/unterkunft/${slug}`,
+      canonical: `${siteUrl}/accommodation/${slug}`,
       languages: {
-        en: `${siteUrl}/frontend/accommodation/${slug}`,
-        hu: `${siteUrl}/frontend/szallas/${slug}`,
-        de: `${siteUrl}/frontend/unterkunft/${slug}`,
-        'x-default': `${siteUrl}/frontend/accommodation/${slug}`,
+        en: `${siteUrl}/accommodation/${slug}`,
+        hu: `${siteUrl}/szallas/${slug}`,
+        de: `${siteUrl}/unterkunft/${slug}`,
+        'x-default': `${siteUrl}/accommodation/${slug}`,
       },
     },
     openGraph: {
       title: `${name} | Lillybeth®`,
-      description: desc.slice(0, 160) || seoConfig.accommodationDetail.de.description,
-      url: `${siteUrl}/frontend/unterkunft/${slug}`,
+      description: desc.slice(0, 160) || seoConfig.accommodationDetail.en.description,
+      url: `${siteUrl}/accommodation/${slug}`,
       type: 'website',
       images: [{ url: image }],
     },
@@ -53,13 +53,13 @@ function buildLodgingJsonLd(accommodation: {
   longitude: number | null;
   images: { url: string }[];
 }) {
-  const desc = getLocalizedText(accommodation.description, 'de');
+  const desc = getLocalizedText(accommodation.description, 'en');
   return {
     '@context': 'https://schema.org',
     '@type': 'LodgingBusiness',
     name: accommodation.name,
     description: desc || undefined,
-    url: `${siteUrl}/frontend/unterkunft/${accommodation.slug}`,
+    url: `${siteUrl}/accommodation/${accommodation.slug}`,
     image: accommodation.images.map((img) => img.url),
     address: {
       '@type': 'PostalAddress',
@@ -84,7 +84,7 @@ export default async function Page({ params }: Props) {
   return (
     <>
       {jsonLd && <JsonLd data={jsonLd} />}
-      <AccommodationDetailPage slug={slug} routeLanguage="de" />
+      <AccommodationDetailPage slug={slug} routeLanguage="en" />
     </>
   );
 }

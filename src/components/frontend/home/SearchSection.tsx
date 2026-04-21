@@ -21,7 +21,7 @@ export function SearchSection() {
       guests: guests.toString(),
     });
 
-    router.push(`/frontend/search?${params}`);
+    router.push(`/search?${params}`);
   };
 
   const incrementGuests = () => setGuests((prev) => Math.min(prev + 1, 20));

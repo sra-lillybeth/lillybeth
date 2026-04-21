@@ -196,7 +196,7 @@ export function MapSection() {
                             {t.map.getDirections}
                           </a>
                           <Link
-                            href={`/frontend/${t.routes.accommodation}/${building.slug}`}
+                            href={`/${t.routes.accommodation}/${building.slug}`}
                             onClick={(e) => e.stopPropagation()}
                             className={`
                               inline-flex items-center gap-1 text-xs font-medium

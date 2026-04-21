@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: seoConfig.search.en.description,
   robots: { index: false, follow: true },
   alternates: {
-    canonical: `${siteUrl}/frontend/search`,
+    canonical: `${siteUrl}/search`,
   },
 };
 

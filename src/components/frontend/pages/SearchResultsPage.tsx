@@ -174,7 +174,7 @@ export function SearchResultsPage() {
       params.set('accommodationId', accommodationIdParam);
     }
 
-    router.push(`/frontend/search?${params}`);
+    router.push(`/search?${params}`);
     setShowModifySearch(false);
   };
 
@@ -264,7 +264,7 @@ export function SearchResultsPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link
-                href="/frontend"
+                href="/"
                 className="p-2 -ml-2 text-stone-300 hover:text-white transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -459,7 +459,7 @@ export function SearchResultsPage() {
                     </p>
                   </div>
                   <Link
-                    href={`/frontend/accommodation/${accommodation.slug}`}
+                    href={`/accommodation/${accommodation.slug}`}
                     className="hidden sm:flex items-center gap-1 px-4 py-2 text-sm font-medium text-stone-600 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition-colors"
                   >
                     {t.buildings.viewDetails}

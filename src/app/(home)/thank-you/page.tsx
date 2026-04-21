@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Your booking request has been received. Thank you for choosing Lillybeth® Guesthouses.',
   robots: { index: false, follow: false },
   alternates: {
-    canonical: `${siteUrl}/frontend/thank-you`,
+    canonical: `${siteUrl}/thank-you`,
   },
 };
 

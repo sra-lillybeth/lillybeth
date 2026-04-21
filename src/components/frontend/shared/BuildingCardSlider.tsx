@@ -174,7 +174,7 @@ export function BuildingCardSlider({
           {/* CTA Slide */}
           <div className="relative w-full h-full flex-shrink-0 bg-gradient-to-br from-stone-800 to-stone-900 flex items-center justify-center">
             <Link
-              href={`/frontend/${t.routes.accommodation}/${slug}`}
+              href={`/${t.routes.accommodation}/${slug}`}
               className="flex flex-col items-center gap-4 text-white px-8 py-6 group/cta"
               onClick={(e) => e.stopPropagation()}
             >
@@ -259,7 +259,7 @@ export function BuildingCardSlider({
 
       {/* Content */}
       <div className="p-5">
-        <Link href={`/frontend/${t.routes.accommodation}/${slug}`}>
+        <Link href={`/${t.routes.accommodation}/${slug}`}>
           <h3 className="font-serif text-xl text-stone-800 group-hover:text-stone-600 transition-colors duration-300">
             {name}
           </h3>
@@ -308,7 +308,7 @@ export function BuildingCardSlider({
 
         {/* View Details Link */}
         <Link
-          href={`/frontend/${t.routes.accommodation}/${slug}`}
+          href={`/${t.routes.accommodation}/${slug}`}
           className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-stone-700 hover:text-stone-900 transition-colors"
         >
           {t.buildings.viewDetails}

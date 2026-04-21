@@ -20,18 +20,18 @@ export const metadata: Metadata = {
   keywords: seoConfig.home.en.keywords,
   robots: { index: true, follow: true },
   alternates: {
-    canonical: `${siteUrl}/frontend`,
+    canonical: `${siteUrl}`,
     languages: {
-      en: `${siteUrl}/frontend`,
-      hu: `${siteUrl}/frontend`,
-      de: `${siteUrl}/frontend`,
-      'x-default': `${siteUrl}/frontend`,
+      en: `${siteUrl}`,
+      hu: `${siteUrl}`,
+      de: `${siteUrl}`,
+      'x-default': `${siteUrl}`,
     },
   },
   openGraph: {
     title: seoConfig.home.en.title,
     description: seoConfig.home.en.description,
-    url: `${siteUrl}/frontend`,
+    url: `${siteUrl}`,
     type: 'website',
     images: [{ url: `${siteUrl}/lillybeth-logo.png`, width: 400, height: 400 }],
   },
@@ -62,7 +62,7 @@ const lodgingJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LodgingBusiness',
   name: 'Lillybeth® Guesthouses',
-  url: `${siteUrl}/frontend`,
+  url: siteUrl,
   image: `${siteUrl}/lillybeth-logo.png`,
   telephone: siteConfig.contact.phone,
   email: siteConfig.contact.email,
@@ -74,7 +74,7 @@ const lodgingJsonLd = {
   },
 };
 
-export default function FrontendHomePage() {
+export default function HomePage() {
   return (
     <>
       <JsonLd data={organizationJsonLd} />

@@ -35,9 +35,9 @@ export function Header() {
   }, [isMobileMenuOpen]);
 
   const navLinks = [
-    { href: '/frontend', label: t.header.nav.home },
-    { href: `/frontend/${t.routes.accommodation}`, label: t.header.nav.accommodations },
-    { href: '/frontend/about', label: t.header.nav.about },
+    { href: '/', label: t.header.nav.home },
+    { href: `/${t.routes.accommodation}`, label: t.header.nav.accommodations },
+    { href: '/about', label: t.header.nav.about },
   ];
 
   const handleBookNowClick = () => {
@@ -54,7 +54,7 @@ export function Header() {
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
             <Link
-              href="/frontend"
+              href="/"
               className="flex items-center gap-3 transition-transform duration-300 hover:scale-105"
             >
               <Image
@@ -91,7 +91,7 @@ export function Header() {
                 dark={true}
               />
               <Link
-                href="/frontend/search"
+                href="/search"
                 onClick={handleBookNowClick}
                 className="px-5 py-2.5 text-sm font-medium rounded-lg bg-white text-stone-800 hover:bg-stone-100 transition-all duration-300"
               >
@@ -204,7 +204,7 @@ export function Header() {
             <div className="p-4 border-t border-stone-100 space-y-4">
               <LanguageSelector variant="inline" showFlags={true} showLabels={false} />
               <Link
-                href="/frontend/search"
+                href="/search"
                 onClick={handleBookNowClick}
                 className="
                   block w-full px-5 py-3 text-center text-sm font-medium

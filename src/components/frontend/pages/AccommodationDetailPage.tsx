@@ -115,9 +115,9 @@ export function AccommodationDetailPage({ slug, routeLanguage }: AccommodationDe
   // Get the back link based on route language
   const getBackLink = () => {
     const routes: Record<string, string> = {
-      en: '/frontend/accommodation',
-      hu: '/frontend/szallas',
-      de: '/frontend/unterkunft',
+      en: '/accommodation',
+      hu: '/szallas',
+      de: '/unterkunft',
     };
     return routes[routeLanguage] || routes.en;
   };

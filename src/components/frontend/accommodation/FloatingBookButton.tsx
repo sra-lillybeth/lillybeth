@@ -25,7 +25,7 @@ export function FloatingBookButton({ accommodationId }: FloatingBookButtonProps)
     if (bookingSection) {
       bookingSection.scrollIntoView({ behavior: 'smooth' });
     } else {
-      window.location.href = `/frontend/booking?accommodation=${accommodationId}`;
+      window.location.href = `/booking?accommodation=${accommodationId}`;
     }
   };
 

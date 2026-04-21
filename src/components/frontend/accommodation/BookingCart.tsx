@@ -36,7 +36,7 @@ export function BookingCart() {
 
   const handleBookNow = () => {
     if (hasDates) {
-      router.push('/frontend/booking');
+      router.push('/booking');
     }
   };
 

@@ -115,7 +115,7 @@ export function BookingPage() {
   useEffect(() => {
     if (redirectingToThankYou.current) return;
     if (totalRooms === 0 || !dates.checkIn || !dates.checkOut) {
-      router.push('/frontend');
+      router.push('/');
     }
   }, [totalRooms, dates, router]);
 
@@ -354,7 +354,7 @@ export function BookingPage() {
 
         redirectingToThankYou.current = true;
         clearCart();
-        router.push(`/frontend/thank-you?${params}`);
+        router.push(`/thank-you?${params}`);
       } else {
         setError(data.error || 'Failed to create booking');
       }
@@ -403,7 +403,7 @@ export function BookingPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Link
-            href="/frontend/search"
+            href="/search"
             className="p-2 -ml-2 text-stone-600 hover:text-stone-800 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

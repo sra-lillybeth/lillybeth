@@ -18,7 +18,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand Column */}
           <div>
-            <Link href="/frontend" className="inline-flex items-center gap-3 group">
+            <Link href="/" className="inline-flex items-center gap-3 group">
               <Image
                 src="/lillybeth-logo.png"
                 alt="Lillybeth"
@@ -127,7 +127,7 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               <li>
                 <Link
-                  href={`/frontend/${t.routes.accommodation}`}
+                  href={`/${t.routes.accommodation}`}
                   className="text-sm text-stone-400 hover:text-white transition-colors duration-200"
                 >
                   {t.buildings.viewAll}

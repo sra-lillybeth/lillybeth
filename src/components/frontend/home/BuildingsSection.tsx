@@ -153,7 +153,7 @@ export function BuildingsSection() {
         {buildings.length > 3 && (
           <div className="mt-12 text-center">
             <Link
-              href={`/frontend/${t.routes.accommodation}`}
+              href={`/${t.routes.accommodation}`}
               className="
                 inline-flex items-center gap-2 px-8 py-3
                 border-2 border-stone-800 text-stone-800

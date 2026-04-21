@@ -29,7 +29,7 @@ export function AccommodationBookingSearch({
       accommodationId: accommodationId,
     });
 
-    router.push(`/frontend/search?${params}`);
+    router.push(`/search?${params}`);
   };
 
   return (

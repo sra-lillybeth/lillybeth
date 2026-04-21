@@ -28,7 +28,7 @@ export function BuildingCard({
 
   return (
     <Link
-      href={`/frontend/${t.routes.accommodation}/${slug}`}
+      href={`/${t.routes.accommodation}/${slug}`}
       className="
         group block
         bg-white rounded-2xl overflow-hidden

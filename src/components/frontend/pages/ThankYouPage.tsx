@@ -94,7 +94,7 @@ export function ThankYouPage() {
               {t.thankYou?.noBookingDescription || 'We could not find booking details. Please start a new search.'}
             </p>
             <Link
-              href="/frontend/search"
+              href="/search"
               className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 hover:bg-amber-300 text-stone-900 font-semibold rounded-xl transition-colors"
             >
               {t.search.searchButton}
@@ -312,7 +312,7 @@ export function ThankYouPage() {
             {/* Actions */}
             <div className="pt-6 flex flex-col sm:flex-row gap-3">
               <Link
-                href="/frontend"
+                href="/"
                 className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-stone-800 text-white rounded-xl font-medium hover:bg-stone-700 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -321,7 +321,7 @@ export function ThankYouPage() {
                 {t.common.backToHome}
               </Link>
               <Link
-                href={`/frontend/${t.routes.accommodation}`}
+                href={`/${t.routes.accommodation}`}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-stone-100 text-stone-700 rounded-xl font-medium hover:bg-stone-200 transition-colors"
               >
                 {t.header.nav.accommodations}

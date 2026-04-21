@@ -10,9 +10,9 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/admin/',
           '/api/',
-          '/frontend/thank-you',
-          '/frontend/booking',
-          '/frontend/search',
+          '/thank-you',
+          '/booking',
+          '/search',
           '/*?*',
         ],
       },

@@ -84,9 +84,9 @@ export const siteConfig = {
    * Legal pages (future implementation)
    */
   legal: {
-    privacyPolicyUrl: '/frontend/privacy',
-    termsUrl: '/frontend/terms',
-    cancellationPolicyUrl: '/frontend/cancellation',
+    privacyPolicyUrl: '/privacy',
+    termsUrl: '/terms',
+    cancellationPolicyUrl: '/cancellation',
   },
 };
 

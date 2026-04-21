@@ -2,7 +2,7 @@ import { FrontendLanguageProvider } from '@/contexts/FrontendLanguageContext';
 import { BookingCartProvider } from '@/contexts/BookingCartContext';
 import { Header, Footer } from '@/components/frontend/layout';
 
-export default function FrontendLayout({
+export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode;

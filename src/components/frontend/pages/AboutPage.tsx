@@ -422,7 +422,7 @@ export function AboutPage() {
                               </a>
                             )}
                             <Link
-                              href={`/frontend/${t.routes.accommodation}/${building.slug}`}
+                              href={`/${t.routes.accommodation}/${building.slug}`}
                               onClick={(e) => e.stopPropagation()}
                               className={`inline-flex items-center gap-1 text-xs font-medium transition-colors ${isSelected ? 'text-white/90 hover:text-white' : 'text-stone-600 hover:text-stone-800'}`}
                             >
@@ -465,7 +465,7 @@ export function AboutPage() {
                 return (
                   <Link
                     key={building.id}
-                    href={`/frontend/${t.routes.accommodation}/${building.slug}`}
+                    href={`/${t.routes.accommodation}/${building.slug}`}
                     className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
