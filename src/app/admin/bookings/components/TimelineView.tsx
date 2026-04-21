@@ -13,7 +13,7 @@ import {
   STATUS_COLORS,
   STATUS_LABELS,
   PAYMENT_LABELS,
-  PAYMENT_COLORS,
+  PAYMENT_COLORS
 } from '../types'
 import BookingModal from './BookingModal'
 import BookingGroupModal from './BookingGroupModal'
@@ -64,7 +64,7 @@ const VIEW_MODE_CONFIG = {
     roomColumnWidth: 110,
     headerHeight: 70,
     defaultDays: 14,
-    showFullLabels: true,
+    showFullLabels: true
   },
   monthly: {
     dayWidth: 32,
@@ -73,7 +73,7 @@ const VIEW_MODE_CONFIG = {
     roomColumnWidth: 100,
     headerHeight: 70,
     defaultDays: 90,
-    showFullLabels: false,
+    showFullLabels: false
   },
   default: {
     dayWidth: 80,
@@ -82,8 +82,8 @@ const VIEW_MODE_CONFIG = {
     roomColumnWidth: 110,
     headerHeight: 70,
     defaultDays: 30,
-    showFullLabels: true,
-  },
+    showFullLabels: true
+  }
 }
 
 // Timeline-specific status colors (opacity-based for booking bars)
@@ -92,7 +92,7 @@ const TIMELINE_STATUS_OPACITY = {
   CONFIRMED: 'opacity-100',
   CHECKED_IN: 'opacity-100',
   CHECKED_OUT: 'opacity-80',
-  CANCELLED: 'opacity-30 line-through',
+  CANCELLED: 'opacity-30 line-through'
 }
 
 interface TimelineViewProps {
@@ -106,7 +106,7 @@ export default function TimelineView({
   filterBuildingId,
   filterRoomTypeId,
   filterSource,
-  readOnly = false,
+  readOnly = false
 }: TimelineViewProps) {
   const { language } = useLanguage()
   const [timelineData, setTimelineData] = useState<TimelineData | null>(null)
@@ -194,7 +194,7 @@ export default function TimelineView({
     try {
       const params = new URLSearchParams({
         startDate,
-        endDate: endDate(),
+        endDate: endDate()
       })
       if (filterBuildingId) params.set('buildingId', filterBuildingId)
 
@@ -239,7 +239,7 @@ export default function TimelineView({
               room,
               building: building.name,
               roomType: getLocalizedText(roomType.name, language),
-              capacity: roomType.capacity,
+              capacity: roomType.capacity
             })
           })
         })
@@ -277,8 +277,12 @@ export default function TimelineView({
     const timelineStart = new Date(startDate)
 
     // Calculate day differences from timeline start
-    const startDiff = Math.floor((checkIn.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24))
-    const endDiff = Math.floor((checkOut.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24))
+    const startDiff = Math.floor(
+      (checkIn.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24)
+    )
+    const endDiff = Math.floor(
+      (checkOut.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24)
+    )
 
     // Clip to visible range: [0, daysToShow]
     const effectiveStart = Math.max(0, startDiff)
@@ -424,7 +428,9 @@ export default function TimelineView({
 
     const originalCheckIn = new Date(draggingBooking.checkIn)
     const originalCheckOut = new Date(draggingBooking.checkOut)
-    const nights = Math.ceil((originalCheckOut.getTime() - originalCheckIn.getTime()) / (1000 * 60 * 60 * 24))
+    const nights = Math.ceil(
+      (originalCheckOut.getTime() - originalCheckIn.getTime()) / (1000 * 60 * 60 * 24)
+    )
 
     const newCheckIn = new Date(date)
     const newCheckOut = new Date(date)
@@ -459,7 +465,7 @@ export default function TimelineView({
     }
 
     // Extract existing additional price titles to preserve selections
-    const selectedPriceTitles = draggingBooking.additionalPrices.map(p => p.title)
+    const selectedPriceTitles = draggingBooking.additionalPrices.map((p) => p.title)
 
     try {
       const res = await fetch('/api/admin/bookings/calculate-price', {
@@ -469,8 +475,8 @@ export default function TimelineView({
           roomId,
           checkIn: newCheckInStr,
           checkOut: newCheckOutStr,
-          selectedPriceTitles,
-        }),
+          selectedPriceTitles
+        })
       })
 
       if (res.ok) {
@@ -482,7 +488,7 @@ export default function TimelineView({
           (p: { title: string; priceEur: number; quantity: number }) => ({
             title: p.title,
             priceEur: p.priceEur,
-            quantity: p.quantity,
+            quantity: p.quantity
           })
         )
 
@@ -494,7 +500,7 @@ export default function TimelineView({
             newCheckOut: newCheckOutStr,
             oldPrice,
             newPrice,
-            newAdditionalPrices,
+            newAdditionalPrices
           })
           setShowDragWarningModal(true)
           setDraggingBooking(null)
@@ -504,7 +510,14 @@ export default function TimelineView({
         }
 
         // No price change, but still update with recalculated additional prices
-        await executeDrop(draggingBooking.id, roomId, newCheckInStr, newCheckOutStr, undefined, newAdditionalPrices)
+        await executeDrop(
+          draggingBooking.id,
+          roomId,
+          newCheckInStr,
+          newCheckOutStr,
+          undefined,
+          newAdditionalPrices
+        )
         return
       }
     } catch (error) {
@@ -529,7 +542,7 @@ export default function TimelineView({
       const updateData: Record<string, unknown> = {
         roomId,
         checkIn,
-        checkOut,
+        checkOut
       }
 
       if (newPrice !== undefined) {
@@ -544,7 +557,7 @@ export default function TimelineView({
       const res = await fetch(`/api/admin/bookings/${bookingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData),
+        body: JSON.stringify(updateData)
       })
 
       if (res.ok) {
@@ -567,11 +580,7 @@ export default function TimelineView({
   }
 
   // Execute drop for grouped bookings - updates all rooms in group
-  const executeGroupDrop = async (
-    groupId: string,
-    checkIn: string,
-    checkOut: string
-  ) => {
+  const executeGroupDrop = async (groupId: string, checkIn: string, checkOut: string) => {
     // Set loading state for all bookings in the group
     const siblingIds = timelineData?.groupSiblings[groupId] || []
     setUpdatingBookingIds(new Set(siblingIds))
@@ -580,7 +589,7 @@ export default function TimelineView({
       const res = await fetch(`/api/admin/booking-groups/${groupId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ checkIn, checkOut }),
+        body: JSON.stringify({ checkIn, checkOut })
       })
 
       if (res.ok) {
@@ -601,11 +610,7 @@ export default function TimelineView({
   }
 
   // Execute room change for a booking within a group (Y-axis movement)
-  const executeGroupRoomChange = async (
-    groupId: string,
-    bookingId: string,
-    newRoomId: string
-  ) => {
+  const executeGroupRoomChange = async (groupId: string, bookingId: string, newRoomId: string) => {
     // Set loading state for this booking
     setUpdatingBookingIds(new Set([bookingId]))
 
@@ -615,8 +620,8 @@ export default function TimelineView({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           bookingId,
-          roomId: newRoomId,
-        }),
+          roomId: newRoomId
+        })
       })
 
       if (res.ok) {
@@ -643,7 +648,7 @@ export default function TimelineView({
       pendingDrop.roomId,
       pendingDrop.newCheckIn,
       pendingDrop.newCheckOut,
-      updatePrice ? pendingDrop.newPrice ?? undefined : undefined,
+      updatePrice ? (pendingDrop.newPrice ?? undefined) : undefined,
       pendingDrop.newAdditionalPrices
     )
   }
@@ -658,27 +663,32 @@ export default function TimelineView({
     if (!timelineData?.buildings) return []
     const rows: TimelineRow[] = []
 
-    const sortRoomsNumerically = (rooms: Room[]) =>
-      [...rooms].sort((a, b) => {
-        const aNum = parseInt(a.name.replace(/\D+/g, ''), 10)
-        const bNum = parseInt(b.name.replace(/\D+/g, ''), 10)
-        if (!isNaN(aNum) && !isNaN(bNum) && aNum !== bNum) return aNum - bNum
-        return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
-      })
-
     timelineData.buildings.forEach((building) => {
       rows.push({ type: 'building', building })
+
+      // Collect all rooms across all room types, then sort together
+      const allRooms: { room: Room; roomTypeName: string; roomTypeId: string }[] = []
       building.roomTypes?.forEach((roomType) => {
-        // Skip roomType row - show rooms directly under building
-        const sortedRooms = sortRoomsNumerically(roomType.rooms || [])
-        sortedRooms.forEach((room) => {
-          rows.push({
-            type: 'room',
+        roomType.rooms?.forEach((room) => {
+          allRooms.push({
             room,
             roomTypeName: getLocalizedText(roomType.name, language),
-            roomTypeId: roomType.id,
-            buildingName: building.name,
+            roomTypeId: roomType.id
           })
+        })
+      })
+
+      allRooms.sort((a, b) =>
+        a.room.name.localeCompare(b.room.name, undefined, { numeric: true, sensitivity: 'base' })
+      )
+
+      allRooms.forEach(({ room, roomTypeName, roomTypeId }) => {
+        rows.push({
+          type: 'room',
+          room,
+          roomTypeName,
+          roomTypeId,
+          buildingName: building.name
         })
       })
     })
@@ -686,7 +696,9 @@ export default function TimelineView({
   }
 
   const timelineRows = getTimelineRows()
-  const roomRows = timelineRows.filter((row): row is TimelineRow & { type: 'room' } => row.type === 'room')
+  const roomRows = timelineRows.filter(
+    (row): row is TimelineRow & { type: 'room' } => row.type === 'room'
+  )
 
   const calculateTotalHeight = () => {
     return timelineRows.reduce((total, row) => {
@@ -703,9 +715,7 @@ export default function TimelineView({
   }
 
   const findRoomRowIndex = (roomId: string): number => {
-    return timelineRows.findIndex(
-      (row) => row.type === 'room' && row.room.id === roomId
-    )
+    return timelineRows.findIndex((row) => row.type === 'room' && row.room.id === roomId)
   }
 
   const isDayInactive = (roomTypeId: string, dateStr: string): boolean => {
@@ -754,7 +764,12 @@ export default function TimelineView({
               title="Previous week"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                />
               </svg>
             </button>
             <button
@@ -763,7 +778,12 @@ export default function TimelineView({
               title="Previous day"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
             <button
@@ -778,7 +798,12 @@ export default function TimelineView({
               title="Next day"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
             <button
@@ -787,7 +812,12 @@ export default function TimelineView({
               title="Next week"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                />
               </svg>
             </button>
           </div>
@@ -850,7 +880,9 @@ export default function TimelineView({
             {Object.entries(SOURCE_ICONS).map(([source, icon]) => (
               <div key={source} className="flex items-center gap-1">
                 <img src={icon} alt={source} className="w-4 h-4 object-contain" />
-                <span className="text-stone-600">{SOURCE_LABELS[source as keyof typeof SOURCE_LABELS]}</span>
+                <span className="text-stone-600">
+                  {SOURCE_LABELS[source as keyof typeof SOURCE_LABELS]}
+                </span>
               </div>
             ))}
             <div className="flex items-center gap-1">
@@ -873,7 +905,11 @@ export default function TimelineView({
             className="absolute top-0 left-0 bg-white border-b border-r border-stone-200 z-30 flex items-center justify-center"
             style={{ width: ROOM_COLUMN_WIDTH, height: HEADER_HEIGHT }}
           >
-            <span className={`font-medium text-stone-600 ${viewMode === 'monthly' ? 'text-xs' : 'text-sm'}`}>Rooms</span>
+            <span
+              className={`font-medium text-stone-600 ${viewMode === 'monthly' ? 'text-xs' : 'text-sm'}`}
+            >
+              Rooms
+            </span>
           </div>
 
           {/* Fixed header (dates) */}
@@ -895,17 +931,36 @@ export default function TimelineView({
             >
               <div style={{ width: dates.length * DAY_WIDTH }}>
                 {/* Month headers row */}
-                <div className="flex border-b border-stone-100" style={{ height: viewMode === 'monthly' ? 18 : 24 }}>
+                <div
+                  className="flex border-b border-stone-100"
+                  style={{ height: viewMode === 'monthly' ? 18 : 24 }}
+                >
                   {(() => {
-                    const monthGroups: { month: string; monthShort: string; year: number; count: number }[] = []
+                    const monthGroups: {
+                      month: string
+                      monthShort: string
+                      year: number
+                      count: number
+                    }[] = []
                     dates.forEach((date) => {
-                      const monthYear = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-                      const monthShort = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+                      const monthYear = date.toLocaleDateString('en-US', {
+                        month: 'long',
+                        year: 'numeric'
+                      })
+                      const monthShort = date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        year: '2-digit'
+                      })
                       const last = monthGroups[monthGroups.length - 1]
                       if (last && last.month === monthYear) {
                         last.count++
                       } else {
-                        monthGroups.push({ month: monthYear, monthShort, year: date.getFullYear(), count: 1 })
+                        monthGroups.push({
+                          month: monthYear,
+                          monthShort,
+                          year: date.getFullYear(),
+                          count: 1
+                        })
                       }
                     })
                     return monthGroups.map((group, idx) => (
@@ -914,7 +969,9 @@ export default function TimelineView({
                         className="flex-shrink-0 flex items-center justify-start bg-stone-500  text-white border-r border-stone-600"
                         style={{ width: group.count * DAY_WIDTH }}
                       >
-                        <span className={`font-semibold tracking-wide sticky left-5 ml-5 mr-5 ${viewMode === 'monthly' ? 'text-[10px]' : 'text-sm'}`}>
+                        <span
+                          className={`font-semibold tracking-wide sticky left-5 ml-5 mr-5 ${viewMode === 'monthly' ? 'text-[10px]' : 'text-sm'}`}
+                        >
                           {viewMode === 'monthly' ? group.monthShort : group.month}
                         </span>
                       </div>
@@ -922,7 +979,10 @@ export default function TimelineView({
                   })()}
                 </div>
                 {/* Day headers row */}
-                <div className="flex" style={{ height: HEADER_HEIGHT - (viewMode === 'monthly' ? 18 : 24) }}>
+                <div
+                  className="flex"
+                  style={{ height: HEADER_HEIGHT - (viewMode === 'monthly' ? 18 : 24) }}
+                >
                   {dates.map((date, index) => {
                     const dateStr = date.toISOString().split('T')[0]
                     const isToday = date.toDateString() === new Date().toDateString()
@@ -933,7 +993,13 @@ export default function TimelineView({
                       <div
                         key={index}
                         className={`flex-shrink-0 border-r border-stone-200 flex flex-col items-center justify-center relative ${
-                          isToday ? 'bg-amber-50' : isSpecialDay ? 'bg-sky-100' : isWeekend ? 'bg-stone-200' : ''
+                          isToday
+                            ? 'bg-amber-50'
+                            : isSpecialDay
+                              ? 'bg-sky-100'
+                              : isWeekend
+                                ? 'bg-stone-200'
+                                : ''
                         }`}
                         style={{ width: DAY_WIDTH }}
                         title={specialDayName || undefined}
@@ -941,11 +1007,17 @@ export default function TimelineView({
                         {viewMode === 'monthly' ? (
                           /* Compact monthly header */
                           <>
-                            <span className={`text-[9px] font-medium ${isToday ? 'text-amber-600' : isSpecialDay ? 'text-sky-700' : 'text-stone-700'}`}>
+                            <span
+                              className={`text-[9px] font-medium ${isToday ? 'text-amber-600' : isSpecialDay ? 'text-sky-700' : 'text-stone-700'}`}
+                            >
                               {date.getDate()}
                             </span>
                             {isSpecialDay && (
-                              <svg className="w-2 h-2 text-sky-500 absolute bottom-0.5" fill="currentColor" viewBox="0 0 24 24">
+                              <svg
+                                className="w-2 h-2 text-sky-500 absolute bottom-0.5"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
                                 <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                               </svg>
                             )}
@@ -953,15 +1025,23 @@ export default function TimelineView({
                         ) : (
                           /* Default / Weekly header */
                           <>
-                            <span className={`text-[10px] ${isSpecialDay ? 'text-sky-600' : 'text-stone-500'}`}>
+                            <span
+                              className={`text-[10px] ${isSpecialDay ? 'text-sky-600' : 'text-stone-500'}`}
+                            >
                               {date.toLocaleDateString('en-US', { weekday: 'short' })}
                             </span>
-                            <span className={`text-sm font-medium ${isToday ? 'text-amber-600' : isSpecialDay ? 'text-sky-700' : 'text-stone-900'}`}>
+                            <span
+                              className={`text-sm font-medium ${isToday ? 'text-amber-600' : isSpecialDay ? 'text-sky-700' : 'text-stone-900'}`}
+                            >
                               {date.getDate()}
                             </span>
                             {isSpecialDay && (
                               <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center gap-0.5 pb-0.5">
-                                <svg className="w-2.5 h-2.5 text-sky-500" fill="currentColor" viewBox="0 0 24 24">
+                                <svg
+                                  className="w-2.5 h-2.5 text-sky-500"
+                                  fill="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
                                   <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                                 </svg>
                               </div>
@@ -980,7 +1060,12 @@ export default function TimelineView({
           <div
             data-room-sidebar
             className="absolute left-0 bg-white border-r border-stone-200 z-20 overflow-y-auto [&::-webkit-scrollbar]:hidden"
-            style={{ top: HEADER_HEIGHT, bottom: 0, width: ROOM_COLUMN_WIDTH, scrollbarWidth: 'none' }}
+            style={{
+              top: HEADER_HEIGHT,
+              bottom: 0,
+              width: ROOM_COLUMN_WIDTH,
+              scrollbarWidth: 'none'
+            }}
             onScroll={(e) => {
               const target = e.target as HTMLDivElement
               const mainContent = document.getElementById('timeline-content')
@@ -997,7 +1082,9 @@ export default function TimelineView({
                     className={`border-b border-stone-200 flex items-center bg-stone-800 ${viewMode === 'monthly' ? 'px-2' : 'px-3'}`}
                     style={{ height: HEADER_ROW_HEIGHT }}
                   >
-                    <p className={`font-semibold text-white truncate ${viewMode === 'monthly' ? 'text-xs' : 'text-sm'}`}>
+                    <p
+                      className={`font-semibold text-white truncate ${viewMode === 'monthly' ? 'text-xs' : 'text-sm'}`}
+                    >
                       {row.building.name}
                     </p>
                   </div>
@@ -1011,7 +1098,9 @@ export default function TimelineView({
                     className={`border-b border-stone-200 flex items-center bg-stone-100 ${viewMode === 'monthly' ? 'px-2 pl-4' : 'px-3 pl-5'}`}
                     style={{ height: HEADER_ROW_HEIGHT }}
                   >
-                    <p className={`font-medium text-stone-600 truncate ${viewMode === 'monthly' ? 'text-[10px]' : 'text-xs'}`}>
+                    <p
+                      className={`font-medium text-stone-600 truncate ${viewMode === 'monthly' ? 'text-[10px]' : 'text-xs'}`}
+                    >
                       {getLocalizedText(row.roomType.name, language)}
                     </p>
                   </div>
@@ -1027,7 +1116,10 @@ export default function TimelineView({
                   style={{ height: ROOM_HEIGHT }}
                 >
                   <div className="min-w-0 flex items-center gap-2">
-                    <p className={`truncate ${!row.room.isActive ? 'text-stone-400' : 'text-stone-900'} ${viewMode === 'monthly' ? 'text-xs' : 'text-sm'}`}>
+                    <p
+                      title={row.roomTypeName}
+                      className={`truncate ${!row.room.isActive ? 'text-stone-400' : 'text-stone-900'} ${viewMode === 'monthly' ? 'text-xs' : 'text-sm'}`}
+                    >
                       {row.room.name}
                     </p>
                     {!row.room.isActive && viewMode !== 'monthly' && (
@@ -1050,7 +1142,7 @@ export default function TimelineView({
               left: ROOM_COLUMN_WIDTH,
               right: 0,
               bottom: 0,
-              scrollbarWidth: 'none',
+              scrollbarWidth: 'none'
             }}
             onScroll={(e) => {
               const target = e.target as HTMLDivElement
@@ -1067,7 +1159,7 @@ export default function TimelineView({
               className="relative"
               style={{
                 width: dates.length * DAY_WIDTH,
-                height: calculateTotalHeight(),
+                height: calculateTotalHeight()
               }}
             >
               {/* Grid lines */}
@@ -1080,7 +1172,13 @@ export default function TimelineView({
                   <div
                     key={`grid-${index}`}
                     className={`absolute top-0 bottom-0 border-r border-stone-100 ${
-                      isToday ? 'bg-amber-50/70' : isSpecialDay ? 'bg-sky-100/70' : isWeekend ? 'bg-stone-200/70' : ''
+                      isToday
+                        ? 'bg-amber-50/70'
+                        : isSpecialDay
+                          ? 'bg-sky-100/70'
+                          : isWeekend
+                            ? 'bg-stone-200/70'
+                            : ''
                     }`}
                     style={{ left: index * DAY_WIDTH, width: DAY_WIDTH }}
                   />
@@ -1129,13 +1227,29 @@ export default function TimelineView({
                         left: dateIndex * DAY_WIDTH,
                         top: rowTop,
                         width: DAY_WIDTH,
-                        height: ROOM_HEIGHT,
+                        height: ROOM_HEIGHT
                       }}
-                      onClick={() => !readOnly && !draggingBooking && !isDisabled && !isUpdating && openCreateBooking(row.room.id, dateStr)}
-                      onDragOver={(e) => !readOnly && !isDisabled && handleDragOver(row.room.id, dateStr, e)}
+                      onClick={() =>
+                        !readOnly &&
+                        !draggingBooking &&
+                        !isDisabled &&
+                        !isUpdating &&
+                        openCreateBooking(row.room.id, dateStr)
+                      }
+                      onDragOver={(e) =>
+                        !readOnly && !isDisabled && handleDragOver(row.room.id, dateStr, e)
+                      }
                       onDragLeave={handleDragLeave}
-                      onDrop={(e) => !readOnly && !isDisabled && handleDrop(row.room.id, dateStr, e)}
-                      title={isDateInactive ? 'This day is marked as inactive' : isRoomInactive ? 'This room is inactive' : undefined}
+                      onDrop={(e) =>
+                        !readOnly && !isDisabled && handleDrop(row.room.id, dateStr, e)
+                      }
+                      title={
+                        isDateInactive
+                          ? 'This day is marked as inactive'
+                          : isRoomInactive
+                            ? 'This room is inactive'
+                            : undefined
+                      }
                     />
                   )
                 })
@@ -1180,7 +1294,7 @@ export default function TimelineView({
                         left,
                         top: rowTop + (viewMode === 'monthly' ? 2 : 4),
                         width,
-                        height: ROOM_HEIGHT - (viewMode === 'monthly' ? 4 : 8),
+                        height: ROOM_HEIGHT - (viewMode === 'monthly' ? 4 : 8)
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
@@ -1194,9 +1308,25 @@ export default function TimelineView({
                       {isBookingUpdating ? (
                         /* Loading state */
                         <div className="h-full flex items-center justify-center gap-2 bg-white/60 rounded-lg">
-                          <svg className="animate-spin h-4 w-4 text-stone-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          <svg
+                            className="animate-spin h-4 w-4 text-stone-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
                           </svg>
                           {viewMode !== 'monthly' && (
                             <span className="text-xs text-stone-600 font-medium">Updating...</span>
@@ -1206,27 +1336,49 @@ export default function TimelineView({
                         /* Compact monthly view */
                         <div className="h-full px-1 flex items-center gap-1 overflow-hidden">
                           {isGrouped && (
-                            <span className="w-2 h-2 bg-indigo-500 rounded-sm flex-shrink-0" title="Part of group" />
+                            <span
+                              className="w-2 h-2 bg-indigo-500 rounded-sm flex-shrink-0"
+                              title="Part of group"
+                            />
                           )}
-                          <img src={SOURCE_ICONS[booking.source]} alt={booking.source} className="w-3 h-3 object-contain flex-shrink-0" />
+                          <img
+                            src={SOURCE_ICONS[booking.source]}
+                            alt={booking.source}
+                            className="w-3 h-3 object-contain flex-shrink-0"
+                          />
                           <p className={`text-[10px] font-medium truncate ${colors.text}`}>
-                            {booking.guestName.split(' ').map(n => n[0]).join('').slice(0, 3)}
+                            {booking.guestName
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')
+                              .slice(0, 3)}
                           </p>
                           {booking.hasCustomHufPrice && booking.customHufPrice && (
-                            <span className="text-[8px] font-bold text-purple-700 flex-shrink-0">Ft</span>
+                            <span className="text-[8px] font-bold text-purple-700 flex-shrink-0">
+                              Ft
+                            </span>
                           )}
-                          <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                            booking.paymentStatus === 'FULLY_PAID' ? 'bg-green-500' :
-                            booking.paymentStatus === 'PARTIALLY_PAID' ? 'bg-amber-500' :
-                            booking.paymentStatus === 'REFUNDED' ? 'bg-red-500' :
-                            'bg-stone-300'
-                          }`} />
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                              booking.paymentStatus === 'FULLY_PAID'
+                                ? 'bg-green-500'
+                                : booking.paymentStatus === 'PARTIALLY_PAID'
+                                  ? 'bg-amber-500'
+                                  : booking.paymentStatus === 'REFUNDED'
+                                    ? 'bg-red-500'
+                                    : 'bg-stone-300'
+                            }`}
+                          />
                         </div>
                       ) : (
                         /* Default / Weekly view — always show icon + first 3 chars */
                         <div className="h-full px-1.5 flex items-center gap-1 overflow-hidden">
                           {/* Source icon — always visible */}
-                          <img src={SOURCE_ICONS[booking.source]} alt={booking.source} className="w-3.5 h-3.5 object-contain flex-shrink-0" />
+                          <img
+                            src={SOURCE_ICONS[booking.source]}
+                            alt={booking.source}
+                            className="w-3.5 h-3.5 object-contain flex-shrink-0"
+                          />
                           {/* Name: first 3 chars guaranteed visible, rest truncates */}
                           <div className="flex items-center min-w-0 flex-1">
                             <span className={`text-xs font-semibold flex-shrink-0 ${colors.text}`}>
@@ -1236,7 +1388,10 @@ export default function TimelineView({
                               {booking.guestName.slice(3)}
                             </span>
                             {isGrouped && (
-                              <span className="ml-0.5 text-[8px] px-0.5 py-0.5 font-bold bg-indigo-100 text-indigo-700 rounded flex-shrink-0" title={`Group: ${booking.groupRoomCount || '?'} rooms`}>
+                              <span
+                                className="ml-0.5 text-[8px] px-0.5 py-0.5 font-bold bg-indigo-100 text-indigo-700 rounded flex-shrink-0"
+                                title={`Group: ${booking.groupRoomCount || '?'} rooms`}
+                              >
                                 G{booking.groupRoomCount || ''}
                               </span>
                             )}
@@ -1244,14 +1399,25 @@ export default function TimelineView({
                           {/* Status indicators */}
                           <div className="flex items-center gap-0.5 flex-shrink-0">
                             {booking.hasCustomHufPrice && booking.customHufPrice && (
-                              <span className="text-[8px] px-0.5 font-bold text-purple-700" title="Custom HUF price">Ft</span>
+                              <span
+                                className="text-[8px] px-0.5 font-bold text-purple-700"
+                                title="Custom HUF price"
+                              >
+                                Ft
+                              </span>
                             )}
-                            <span className={`w-1.5 h-1.5 rounded-full ${
-                              booking.paymentStatus === 'FULLY_PAID' ? 'bg-green-500' :
-                              booking.paymentStatus === 'PARTIALLY_PAID' ? 'bg-amber-500' :
-                              booking.paymentStatus === 'REFUNDED' ? 'bg-red-500' :
-                              'bg-stone-300'
-                            }`} title={PAYMENT_LABELS[booking.paymentStatus]} />
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                booking.paymentStatus === 'FULLY_PAID'
+                                  ? 'bg-green-500'
+                                  : booking.paymentStatus === 'PARTIALLY_PAID'
+                                    ? 'bg-amber-500'
+                                    : booking.paymentStatus === 'REFUNDED'
+                                      ? 'bg-red-500'
+                                      : 'bg-stone-300'
+                              }`}
+                              title={PAYMENT_LABELS[booking.paymentStatus]}
+                            />
                           </div>
                         </div>
                       )}
@@ -1264,7 +1430,9 @@ export default function TimelineView({
               {(() => {
                 const today = new Date()
                 const timelineStart = new Date(startDate)
-                const daysDiff = Math.floor((today.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24))
+                const daysDiff = Math.floor(
+                  (today.getTime() - timelineStart.getTime()) / (1000 * 60 * 60 * 24)
+                )
                 if (daysDiff >= 0 && daysDiff < daysToShow) {
                   return (
                     <div
@@ -1286,29 +1454,47 @@ export default function TimelineView({
           className="fixed z-50 bg-white rounded-xl shadow-xl border border-stone-200 p-4 w-80 pointer-events-none"
           style={{
             left: Math.min(hoverPosition.x + 10, window.innerWidth - 340),
-            top: Math.min(hoverPosition.y + 10, window.innerHeight - 350),
+            top: Math.min(hoverPosition.y + 10, window.innerHeight - 350)
           }}
         >
           {/* Group indicator banner */}
           {(hoveredBooking.isGrouped || hoveredBooking.groupId) && (
             <div className="mb-3 px-2 py-1.5 bg-indigo-50 border border-indigo-200 rounded-lg flex items-center gap-2">
-              <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              <svg
+                className="w-4 h-4 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                />
               </svg>
               <span className="text-xs font-medium text-indigo-700">
-                Group Booking ({hoveredBooking.groupRoomCount || hoveredBooking.group?._count?.bookings || '?'} rooms)
+                Group Booking (
+                {hoveredBooking.groupRoomCount || hoveredBooking.group?._count?.bookings || '?'}{' '}
+                rooms)
               </span>
             </div>
           )}
 
           {/* Header with source and status badges */}
           <div className="flex items-center gap-2 mb-3">
-            <img src={SOURCE_ICONS[hoveredBooking.source]} alt={hoveredBooking.source} className="w-4 h-4 object-contain" />
+            <img
+              src={SOURCE_ICONS[hoveredBooking.source]}
+              alt={hoveredBooking.source}
+              className="w-4 h-4 object-contain"
+            />
             <span className="text-xs font-medium text-stone-600">
               {SOURCE_LABELS[hoveredBooking.source]}
             </span>
             <div className="ml-auto flex items-center gap-2">
-              <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_COLORS[hoveredBooking.status].bg} ${STATUS_COLORS[hoveredBooking.status].text}`}>
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full ${STATUS_COLORS[hoveredBooking.status].bg} ${STATUS_COLORS[hoveredBooking.status].text}`}
+              >
                 {STATUS_LABELS[hoveredBooking.status]}
               </span>
             </div>
@@ -1317,14 +1503,27 @@ export default function TimelineView({
           <h4 className="font-semibold text-stone-900">{hoveredBooking.guestName}</h4>
 
           <div className="mt-2 space-y-1 text-sm text-stone-600">
-            <p>{hoveredBooking.guestCount} guest{hoveredBooking.guestCount !== 1 ? 's' : ''}</p>
             <p>
-              {new Date(hoveredBooking.checkIn).toLocaleDateString()} - {new Date(hoveredBooking.checkOut).toLocaleDateString()}
+              {hoveredBooking.guestCount} guest{hoveredBooking.guestCount !== 1 ? 's' : ''}
+            </p>
+            <p>
+              {new Date(hoveredBooking.checkIn).toLocaleDateString()} -{' '}
+              {new Date(hoveredBooking.checkOut).toLocaleDateString()}
             </p>
             {hoveredBooking.arrivalTime && (
               <p className="flex items-center gap-1">
-                <svg className="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-3.5 h-3.5 text-stone-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 Arrival: {hoveredBooking.arrivalTime}
               </p>
@@ -1356,25 +1555,38 @@ export default function TimelineView({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xs text-stone-500">Payment:</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${PAYMENT_COLORS[hoveredBooking.paymentStatus].bg} ${PAYMENT_COLORS[hoveredBooking.paymentStatus].text}`}>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full ${PAYMENT_COLORS[hoveredBooking.paymentStatus].bg} ${PAYMENT_COLORS[hoveredBooking.paymentStatus].text}`}
+                >
                   {PAYMENT_LABELS[hoveredBooking.paymentStatus]}
                 </span>
               </div>
               <div className="text-right">
                 {/* Group booking: show group final amount if custom, otherwise per-room */}
-                {hoveredBooking.groupId && hoveredBooking.group?.hasCustomFinalAmount && hoveredBooking.group?.totalAmount ? (
+                {hoveredBooking.groupId &&
+                hoveredBooking.group?.hasCustomFinalAmount &&
+                hoveredBooking.group?.totalAmount ? (
                   <div>
                     <span className="text-[10px] text-stone-500 block">Custom Group Final</span>
-                    <span className="font-semibold text-orange-700">{hoveredBooking.group.totalAmount.toFixed(2)} EUR</span>
+                    <span className="font-semibold text-orange-700">
+                      {hoveredBooking.group.totalAmount.toFixed(2)} EUR
+                    </span>
                   </div>
                 ) : hoveredBooking.totalAmount ? (
-                  <span className="font-semibold text-stone-900">{hoveredBooking.totalAmount.toFixed(2)} EUR</span>
+                  <span className="font-semibold text-stone-900">
+                    {hoveredBooking.totalAmount.toFixed(2)} EUR
+                  </span>
                 ) : null}
                 {/* HUF price: prefer group-level, fall back to booking-level */}
                 {(() => {
                   const hufPrice = hoveredBooking.groupId
-                    ? (hoveredBooking.group?.hasCustomHufPrice && hoveredBooking.group?.customHufPrice ? hoveredBooking.group.customHufPrice : null)
-                    : (hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice ? hoveredBooking.customHufPrice : null)
+                    ? hoveredBooking.group?.hasCustomHufPrice &&
+                      hoveredBooking.group?.customHufPrice
+                      ? hoveredBooking.group.customHufPrice
+                      : null
+                    : hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice
+                      ? hoveredBooking.customHufPrice
+                      : null
                   return hufPrice ? (
                     <div className="text-xs font-medium text-purple-700">
                       {hufPrice.toLocaleString()} Ft
@@ -1384,15 +1596,18 @@ export default function TimelineView({
               </div>
             </div>
             {/* Custom price banners */}
-            {hoveredBooking.groupId && hoveredBooking.group?.hasCustomFinalAmount && hoveredBooking.group?.totalAmount && (
-              <div className="mt-2 px-2 py-1 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700">
-                <span className="font-medium">Custom final amount</span> – manually agreed group price
-              </div>
-            )}
+            {hoveredBooking.groupId &&
+              hoveredBooking.group?.hasCustomFinalAmount &&
+              hoveredBooking.group?.totalAmount && (
+                <div className="mt-2 px-2 py-1 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700">
+                  <span className="font-medium">Custom final amount</span> – manually agreed group
+                  price
+                </div>
+              )}
             {(() => {
               const hasHuf = hoveredBooking.groupId
-                ? (hoveredBooking.group?.hasCustomHufPrice && hoveredBooking.group?.customHufPrice)
-                : (hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice)
+                ? hoveredBooking.group?.hasCustomHufPrice && hoveredBooking.group?.customHufPrice
+                : hoveredBooking.hasCustomHufPrice && hoveredBooking.customHufPrice
               return hasHuf ? (
                 <div className="mt-2 px-2 py-1 bg-purple-50 border border-purple-200 rounded text-xs text-purple-700">
                   <span className="font-medium">Custom HUF price</span> – manually agreed amount
@@ -1461,8 +1676,18 @@ export default function TimelineView({
           <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <svg
+                  className="w-5 h-5 text-amber-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-stone-900">Price Change Detected</h3>
@@ -1480,17 +1705,22 @@ export default function TimelineView({
               <div className="flex justify-between text-sm">
                 <span className="text-stone-600">New dates:</span>
                 <span className="font-medium text-stone-800">
-                  {new Date(pendingDrop.newCheckIn).toLocaleDateString()} - {new Date(pendingDrop.newCheckOut).toLocaleDateString()}
+                  {new Date(pendingDrop.newCheckIn).toLocaleDateString()} -{' '}
+                  {new Date(pendingDrop.newCheckOut).toLocaleDateString()}
                 </span>
               </div>
               <div className="border-t border-stone-200 pt-2 mt-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-stone-600">Current price:</span>
-                  <span className="font-medium text-stone-800">{pendingDrop.oldPrice?.toFixed(2)} EUR</span>
+                  <span className="font-medium text-stone-800">
+                    {pendingDrop.oldPrice?.toFixed(2)} EUR
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-stone-600">New price:</span>
-                  <span className={`font-medium ${pendingDrop.newPrice! > pendingDrop.oldPrice! ? 'text-green-600' : 'text-red-600'}`}>
+                  <span
+                    className={`font-medium ${pendingDrop.newPrice! > pendingDrop.oldPrice! ? 'text-green-600' : 'text-red-600'}`}
+                  >
                     {pendingDrop.newPrice?.toFixed(2)} EUR
                   </span>
                 </div>
