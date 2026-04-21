@@ -177,7 +177,7 @@ export function ReviewsSection({ buildingId }: ReviewsSectionProps) {
         <div className="relative">
           {/* Overflow container */}
           <div
-            className="overflow-visible cursor-grab active:cursor-grabbing select-none"
+            className="overflow-hidden cursor-grab active:cursor-grabbing select-none"
             onPointerDown={onPointerDown}
             onPointerUp={onPointerUp}
           >
